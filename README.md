@@ -49,6 +49,10 @@ uvx --from git+https://github.com/agent-axiom/agent-anvil \
   --no-artifacts
 ```
 
+After a pull request is merged into `main`, the same workflow publishes the
+rebuilt `leaderboard.csv`, `leaderboard.json`, and Space files to Hugging Face
+when the repository secret `HF_TOKEN` is configured.
+
 ## Trust Levels
 
 - `self_reported`: generated outside recognized CI
@@ -81,3 +85,14 @@ LEADERBOARD_INDEX_URL=https://raw.githubusercontent.com/agent-axiom/agent-anvil-
 
 The Space reads only the generated index. Raw traces and tool outputs stay with
 the submitting team unless they intentionally publish them.
+
+## Maintainer Setup
+
+Set this repository secret so merges to `main` can refresh Hugging Face:
+
+```text
+HF_TOKEN=<write token for the Dataset and Space>
+```
+
+The publish step writes only aggregate leaderboard files and the Space app. It
+does not upload raw traces, model outputs, or tool outputs.
