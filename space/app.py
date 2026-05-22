@@ -10,7 +10,10 @@ from urllib.request import urlopen
 gr: Any = import_module("gradio")
 pd: Any = import_module("pandas")
 
-INDEX_URL = os.getenv("LEADERBOARD_INDEX_URL", "")
+INDEX_URL = os.getenv(
+    "LEADERBOARD_INDEX_URL",
+    "https://huggingface.co/datasets/ifif/agent-anvil-leaderboard-data/resolve/main/leaderboard.json",
+)
 INDEX_PATH = Path(os.getenv("LEADERBOARD_INDEX_PATH", "leaderboard.json"))
 
 COLUMNS = [

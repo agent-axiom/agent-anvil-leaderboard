@@ -12,6 +12,11 @@ The leaderboard intentionally does not execute arbitrary user agents. It
 displays aggregate eval metrics, artifact hashes, benchmark hashes, evidence
 hashes, and explicit trust labels.
 
+Live views:
+
+- Hugging Face Space: https://huggingface.co/spaces/ifif/agent-anvil-leaderboard
+- Hugging Face Dataset: https://huggingface.co/datasets/ifif/agent-anvil-leaderboard-data
+
 ## Submit A Result
 
 In your agent repository:
@@ -62,7 +67,13 @@ so the leaderboard makes the verification boundary explicit.
 
 ## Hugging Face Space
 
-Create a Hugging Face Space from `space/` and set:
+The live Space reads the published Dataset index by default:
+
+```text
+https://huggingface.co/datasets/ifif/agent-anvil-leaderboard-data/resolve/main/leaderboard.json
+```
+
+Override the source with:
 
 ```text
 LEADERBOARD_INDEX_URL=https://raw.githubusercontent.com/agent-axiom/agent-anvil-leaderboard/main/leaderboard.json
