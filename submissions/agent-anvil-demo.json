@@ -1,0 +1,121 @@
+{
+  "schema_version": "agent-anvil.leaderboard.v1",
+  "submitter": {
+    "agent_name": "Agent Anvil Demo",
+    "agent_version": "paper-benchmark",
+    "repo_url": "https://github.com/agent-axiom/agent-anvil",
+    "commit_sha": "7bc8f8a",
+    "notes": "Seed row generated from the published Agent Anvil paper benchmark artifacts."
+  },
+  "benchmark": {
+    "name": "agent_anvil_trace_eval_benchmark",
+    "description": "A compact offline benchmark for comparing final-answer-only checks with trace-aware Agent Anvil assertions across tool-use safety scenarios.\n",
+    "manifest_path": "experiments/paper.yaml",
+    "manifest_sha256": "5aa7a1b59a262ed964d3bcab3afb06c2ee13bee81f63bd63f0122990300b4cb7",
+    "scenario_hashes": {
+      "experiments/scenarios/refund_trace.yaml": "14a4e30da2e37f260493f6e56bacfff9cbbbc9fc5868dccf5210ab6956e1b0cc",
+      "experiments/scenarios/tool_safety_trace.yaml": "b76e76646df306f225b42b8ea77c1095f48672f52295c289aa28da3dfb082f53",
+      "experiments/scenarios/external_protocol_trace.yaml": "d87392b5a45330563cf58bbbcb2d0e60ae4e028d70c5225702a39e4e2061d359",
+      "experiments/scenarios/account_admin_trace.yaml": "924330c96c2ccfd0b39f403df27372219caff3f70dcf94ddfe63bcc3adc78493",
+      "experiments/scenarios/data_pipeline_trace.yaml": "34c8931168f275226fe37d5d9b11376dce1caab3b2c751a5b0714f0ab08c9b5b"
+    }
+  },
+  "metrics": {
+    "total_suites": 5,
+    "total_trials": 100,
+    "final_answer_pass_rate": 100.0,
+    "final_answer_pass_rate_ci_low": 96.3,
+    "final_answer_pass_rate_ci_high": 100.0,
+    "trace_aware_pass_rate": 30.0,
+    "trace_aware_pass_rate_ci_low": 21.9,
+    "trace_aware_pass_rate_ci_high": 39.6,
+    "answer_only_missed_failures": 70,
+    "answer_only_missed_failure_rate": 70.0,
+    "answer_only_missed_failure_rate_ci_low": 60.4,
+    "answer_only_missed_failure_rate_ci_high": 78.1,
+    "outcome_counts": {
+      "policy_violation": 70,
+      "pass": 30
+    }
+  },
+  "evaluator_ablation": [
+    {
+      "evaluator": "final_answer_baseline",
+      "description": "Final answer exists and avoids obvious runtime failure text.",
+      "total_trials": 100,
+      "passed": 100,
+      "pass_rate": 100.0,
+      "pass_rate_ci_low": 96.3,
+      "pass_rate_ci_high": 100.0,
+      "answer_only_missed_failures": 0,
+      "answer_only_missed_failure_rate": 0.0
+    },
+    {
+      "evaluator": "trace_completion_only",
+      "description": "Trace completed without protocol/runtime failure.",
+      "total_trials": 100,
+      "passed": 100,
+      "pass_rate": 100.0,
+      "pass_rate_ci_low": 96.3,
+      "pass_rate_ci_high": 100.0,
+      "answer_only_missed_failures": 0,
+      "answer_only_missed_failure_rate": 0.0
+    },
+    {
+      "evaluator": "deterministic_assertions",
+      "description": "Trace completion plus deterministic expectations and assertions, excluding policy.",
+      "total_trials": 100,
+      "passed": 30,
+      "pass_rate": 30.0,
+      "pass_rate_ci_low": 21.9,
+      "pass_rate_ci_high": 39.6,
+      "answer_only_missed_failures": 70,
+      "answer_only_missed_failure_rate": 70.0
+    },
+    {
+      "evaluator": "policy_checks",
+      "description": "Trace completion plus risky-tool policy preconditions.",
+      "total_trials": 100,
+      "passed": 30,
+      "pass_rate": 30.0,
+      "pass_rate_ci_low": 21.9,
+      "pass_rate_ci_high": 39.6,
+      "answer_only_missed_failures": 70,
+      "answer_only_missed_failure_rate": 70.0
+    },
+    {
+      "evaluator": "full_trace_aware",
+      "description": "Full Agent Anvil trace-aware evaluator, including semantic grading.",
+      "total_trials": 100,
+      "passed": 30,
+      "pass_rate": 30.0,
+      "pass_rate_ci_low": 21.9,
+      "pass_rate_ci_high": 39.6,
+      "answer_only_missed_failures": 70,
+      "answer_only_missed_failure_rate": 70.0
+    }
+  ],
+  "artifacts": {
+    "results_json_path": "docs/paper/results.json",
+    "results_json_sha256": "5f0169d6dbcf000d5b0bba5afbd9f4edd55c68367e11a88747cbfd5e762426f5",
+    "results_markdown_path": "docs/paper/results.md",
+    "results_markdown_sha256": "d0adabe99fc6c354407a8ca184ef2956f07d979f4a6fe8bd0399c54b33435b3a",
+    "table_hashes": {
+      "docs/paper/tables/evaluator_ablation.csv": "5c94164f87748c39b92909432d2123d040d8205056766954d48ad4de813189ba",
+      "docs/paper/tables/evaluator_ablation.tex": "6148a45d38f306be93c25adf162e2c16f746184f51580567bc50de75d2bb891c",
+      "docs/paper/tables/missed_failures.csv": "bddd101321b50eb48e757aa061374c6cef3e8deeb31d9a3b5d5691ff9c989ee8",
+      "docs/paper/tables/outcome_counts.csv": "86b230a450a1b1d589fa02dd95f7a79f2833788cb683e8c1833b31d45b8843e3",
+      "docs/paper/tables/suite_results.csv": "341c9591a44e8a4b63ca032f26436b68dba451b8a7171877c37de7f1e20d8921",
+      "docs/paper/tables/suite_results.tex": "0aa0b6e5e3ad5db7d6fbd24178bcbcfd6a76c93e71ace305ae6967f7d206232b"
+    }
+  },
+  "verification": {
+    "trust_level": "self_reported",
+    "evidence_sha256": "6b1241163c16392cc5dd9f13ccb3694f525bfd437ad7b0d9d4a9ea0daa05b508",
+    "generated_at": "2026-05-22T07:38:03.773707Z",
+    "generated_by": "agent-anvil/0.2.18",
+    "github_repository": "",
+    "github_sha": "",
+    "github_run_url": ""
+  }
+}

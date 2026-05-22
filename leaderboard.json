@@ -1,0 +1,30 @@
+{
+  "schema_version": "agent-anvil.leaderboard.index.v1",
+  "generated_at": "2026-05-22T07:41:47.810196Z",
+  "generated_by": "agent-anvil/0.2.18",
+  "rows": [
+    {
+      "rank": 1,
+      "submission_path": "submissions/agent-anvil-demo.json",
+      "agent_name": "Agent Anvil Demo",
+      "agent_version": "paper-benchmark",
+      "repo_url": "https://github.com/agent-axiom/agent-anvil",
+      "commit_sha": "7bc8f8a",
+      "benchmark_name": "agent_anvil_trace_eval_benchmark",
+      "benchmark_description": "A compact offline benchmark for comparing final-answer-only checks with trace-aware Agent Anvil assertions across tool-use safety scenarios.\n",
+      "trust_level": "self_reported",
+      "evidence_sha256": "6b1241163c16392cc5dd9f13ccb3694f525bfd437ad7b0d9d4a9ea0daa05b508",
+      "github_run_url": "",
+      "generated_at": "2026-05-22T07:38:03.773707Z",
+      "total_trials": 100,
+      "final_answer_pass_rate": 100.0,
+      "trace_aware_pass_rate": 30.0,
+      "answer_only_missed_failures": 70,
+      "answer_only_missed_failure_rate": 70.0,
+      "outcome_counts": {
+        "policy_violation": 70,
+        "pass": 30
+      }
+    }
+  ]
+}
