@@ -4,7 +4,6 @@ from collections import Counter
 from datetime import UTC, datetime
 from typing import Any
 
-
 TRUST_BADGES = {
     "self_reported": "[self-reported]",
     "github_actions": "[GitHub Actions]",
@@ -63,6 +62,7 @@ AGING_DAYS = 90
 MIN_RECOMMENDED_TRIALS = 100
 CANONICAL_BENCHMARK_NAME = "agent_anvil_trace_eval_benchmark"
 CANONICAL_BENCHMARK_SCENARIO_COUNT = 5
+SHA256_HEX_LENGTH = 64
 
 COMPATIBILITY_LABELS = {
     "agent_anvil": "[agent-anvil benchmark]",
@@ -249,7 +249,10 @@ def _compatibility_status(row: dict[str, Any]) -> str:
         return "custom"
     scenario_count = _int_or_default(row.get("benchmark_scenario_count"), 0)
     manifest_hash = str(row.get("benchmark_manifest_sha256") or "").strip()
-    if scenario_count < CANONICAL_BENCHMARK_SCENARIO_COUNT or len(manifest_hash) != 64:
+    if (
+        scenario_count < CANONICAL_BENCHMARK_SCENARIO_COUNT
+        or len(manifest_hash) != SHA256_HEX_LENGTH
+    ):
         return "metadata_missing"
     return "agent_anvil"
 
