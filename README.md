@@ -25,6 +25,13 @@ For a verified GitHub Actions row, copy
 [examples/github-actions-submission.yml](examples/github-actions-submission.yml)
 into your agent repository and run it from the Actions tab.
 
+Verified end-to-end reference:
+[agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent)
+generated a `github_actions` submission in
+[GitHub Actions run 26335581868](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26335581868),
+then submitted it through
+[agent-anvil-leaderboard#1](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/1).
+
 In your agent repository:
 
 ```bash

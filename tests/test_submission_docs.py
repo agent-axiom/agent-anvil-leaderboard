@@ -57,7 +57,21 @@ def test_github_actions_submission_example_is_copy_pasteable() -> None:
     assert "examples/github-actions-submission.yml" in readme
     assert "uvx --from git+https://github.com/agent-axiom/agent-anvil" in workflow
     assert "--require-trust github_actions" in workflow
+    assert "PYTHONPATH: ${{ github.workspace }}" in workflow
     assert "GITHUB_STEP_SUMMARY" in workflow
     assert "actions/upload-artifact@v7" in workflow
     assert "submission/" in workflow
     assert "uv sync --group dev" not in workflow
+
+
+def test_readme_links_verified_end_to_end_demo() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+
+    for text in (readme, contributing):
+        assert "https://github.com/agent-axiom/agent-anvil-demo-agent" in text
+        assert (
+            "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26335581868"
+            in text
+        )
+        assert "https://github.com/agent-axiom/agent-anvil-leaderboard/pull/1" in text
