@@ -42,11 +42,19 @@ def test_submissions_readme_documents_file_contract() -> None:
 
 def test_maintainer_rerun_readme_documents_attestation_contract() -> None:
     text = (ROOT / "maintainer_reruns" / "README.md").read_text(encoding="utf-8")
+    workflow = (ROOT / ".github" / "workflows" / "maintainer-rerun.yml").read_text(
+        encoding="utf-8"
+    )
 
     assert "agent-anvil.maintainer-rerun.v1" in text
     assert "submission_evidence_sha256" in text
     assert "rerun.github_run_url" in text
     assert "successful GitHub Actions run" in text
+    assert "workflow_dispatch" in workflow
+    assert "submission_path" in workflow
+    assert "scripts/write_maintainer_rerun.py" in workflow
+    assert "actions/upload-artifact@v7" in workflow
+    assert "maintainer-rerun-attestation" in workflow
 
 
 def test_github_actions_submission_example_is_copy_pasteable() -> None:
