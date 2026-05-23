@@ -75,3 +75,16 @@ def test_readme_links_verified_end_to_end_demo() -> None:
             in text
         )
         assert "https://github.com/agent-axiom/agent-anvil-leaderboard/pull/1" in text
+
+
+def test_space_invites_verified_submissions() -> None:
+    app = (ROOT / "space" / "app.py").read_text(encoding="utf-8")
+    readme = (ROOT / "space" / "README.md").read_text(encoding="utf-8")
+
+    for text in (app, readme):
+        assert "Submit your agent" in text
+        assert "agent-axiom/agent-anvil-demo-agent" in text
+        assert "agent-anvil-leaderboard/pull/1" in text
+        assert "self_reported" in text
+        assert "github_actions" in text
+        assert "maintainer_rerun" in text
