@@ -46,3 +46,18 @@ def test_maintainer_rerun_readme_documents_attestation_contract() -> None:
     assert "submission_evidence_sha256" in text
     assert "rerun.github_run_url" in text
     assert "successful GitHub Actions run" in text
+
+
+def test_github_actions_submission_example_is_copy_pasteable() -> None:
+    workflow = (ROOT / "examples" / "github-actions-submission.yml").read_text(
+        encoding="utf-8"
+    )
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+
+    assert "examples/github-actions-submission.yml" in readme
+    assert "uvx --from git+https://github.com/agent-axiom/agent-anvil" in workflow
+    assert "--require-trust github_actions" in workflow
+    assert "GITHUB_STEP_SUMMARY" in workflow
+    assert "actions/upload-artifact@v7" in workflow
+    assert "submission/" in workflow
+    assert "uv sync --group dev" not in workflow

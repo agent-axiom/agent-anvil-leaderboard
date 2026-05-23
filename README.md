@@ -21,6 +21,9 @@ Live views:
 
 Full contributor instructions are in [CONTRIBUTING.md](CONTRIBUTING.md). The
 accepted file contract is documented in [submissions/README.md](submissions/README.md).
+For a verified GitHub Actions row, copy
+[examples/github-actions-submission.yml](examples/github-actions-submission.yml)
+into your agent repository and run it from the Actions tab.
 
 In your agent repository:
 

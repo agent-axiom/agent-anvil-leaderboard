@@ -27,6 +27,12 @@ not run arbitrary agents and does not collect raw traces.
 4. Copy it to `submissions/<agent-name>.json`.
 5. Open a pull request and complete the checklist.
 
+For a `github_actions` row, copy
+[`examples/github-actions-submission.yml`](examples/github-actions-submission.yml)
+into `.github/workflows/` in your agent repository. That workflow exports a
+submission with GitHub run metadata and uploads a `submission/*.json` artifact
+you can add to this repository.
+
 CI rebuilds `leaderboard.csv` and `leaderboard.json`. Do not edit generated
 leaderboard index files manually unless you are a maintainer repairing CI
 output.
