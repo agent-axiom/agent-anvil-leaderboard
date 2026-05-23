@@ -16,7 +16,9 @@ Privacy and artifact boundary:
 Trust level:
 
 - [ ] `self_reported`: generated locally or outside a public CI run.
-- [ ] `github_actions`: generated in GitHub Actions and includes a public run URL.
+- [ ] `github_actions`: generated in GitHub Actions and includes
+      `verification.github_run_url`, `verification.github_repository`, and
+      `verification.github_sha` that CI can verify through the GitHub API.
 - [ ] `maintainer_rerun`: reproduced by Agent Anvil maintainers.
 
 Reviewer notes:

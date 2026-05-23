@@ -41,6 +41,8 @@ metrics, benchmark hashes, artifact hashes, and trust metadata.
 
 - `self_reported`: generated locally or outside a public CI run.
 - `github_actions`: generated in GitHub Actions and includes a public run URL.
+  The leaderboard CI verifies that the run exists, completed successfully, and
+  matches `verification.github_repository` and `verification.github_sha`.
 - `maintainer_rerun`: independently reproduced by maintainers.
 
 The leaderboard makes this boundary explicit instead of pretending that a public

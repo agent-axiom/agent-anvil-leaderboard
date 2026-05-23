@@ -50,6 +50,7 @@ uvx --from git+https://github.com/agent-axiom/agent-anvil \
   --out leaderboard.csv \
   --json-out leaderboard.json \
   --no-artifacts
+python3 scripts/verify_github_runs.py
 ```
 
 After a pull request is merged into `main`, the same workflow publishes the
@@ -60,6 +61,7 @@ when the repository secret `HF_TOKEN` is configured.
 
 - `self_reported`: generated outside recognized CI
 - `github_actions`: generated in GitHub Actions and includes a public run URL
+  that this repository verifies through the GitHub API
 - `maintainer_rerun`: independently reproduced by maintainers
 
 Public rows should not pretend to prevent all gaming. The benchmark is visible,

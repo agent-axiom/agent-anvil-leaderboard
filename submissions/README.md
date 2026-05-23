@@ -21,3 +21,7 @@ Trust levels:
 - `self_reported`
 - `github_actions`
 - `maintainer_rerun`
+
+Rows claiming `github_actions` must include `verification.github_run_url`,
+`verification.github_repository`, and `verification.github_sha`. CI verifies
+that evidence through the GitHub API before publishing the leaderboard.
