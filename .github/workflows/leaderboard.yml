@@ -35,7 +35,7 @@ jobs:
         with:
           enable-cache: true
       - name: Test publisher
-        run: python3 -m unittest discover -s tests
+        run: uv run --with pytest pytest -q tests
       - name: Validate submissions and build index
         run: |
           uvx --from git+https://github.com/agent-axiom/agent-anvil \

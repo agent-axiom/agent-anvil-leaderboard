@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import importlib.util
-import unittest
 from pathlib import Path
+
+import pytest
 
 
 def load_publish_module():
@@ -29,56 +30,39 @@ def write_minimal_repo(root: Path) -> None:
     (root / "space" / "requirements.txt").write_text("gradio\n", encoding="utf-8")
 
 
-class PublishHuggingFaceTests(unittest.TestCase):
-    def test_prepare_publish_directories(self) -> None:
-        from tempfile import TemporaryDirectory
+def test_prepare_publish_directories(tmp_path: Path) -> None:
+    module = load_publish_module()
+    repo = tmp_path / "repo"
+    out = tmp_path / "out"
+    repo.mkdir()
+    write_minimal_repo(repo)
 
-        module = load_publish_module()
-        with TemporaryDirectory() as tmp:
-            tmp_path = Path(tmp)
-            repo = tmp_path / "repo"
-            out = tmp_path / "out"
-            repo.mkdir()
-            write_minimal_repo(repo)
+    dataset_dir, space_dir = module.prepare_publish_directories(
+        root=repo,
+        output_dir=out,
+        dataset_id="ifif/agent-anvil-leaderboard-data",
+    )
 
-            dataset_dir, space_dir = module.prepare_publish_directories(
-                root=repo,
-                output_dir=out,
-                dataset_id="ifif/agent-anvil-leaderboard-data",
-            )
+    assert (dataset_dir / "leaderboard.csv").read_text(encoding="utf-8").startswith("rank")
+    assert (dataset_dir / "leaderboard.json").read_text(encoding="utf-8").startswith("{")
+    assert (dataset_dir / "submissions" / "demo.json").exists()
+    assert "Agent Anvil Leaderboard Data" in (dataset_dir / "README.md").read_text(
+        encoding="utf-8"
+    )
+    assert (space_dir / "app.py").exists()
+    assert (space_dir / "requirements.txt").exists()
 
-            self.assertTrue(
-                (dataset_dir / "leaderboard.csv")
-                .read_text(encoding="utf-8")
-                .startswith("rank")
-            )
-            self.assertTrue(
-                (dataset_dir / "leaderboard.json")
-                .read_text(encoding="utf-8")
-                .startswith("{")
-            )
-            self.assertTrue((dataset_dir / "submissions" / "demo.json").exists())
-            self.assertIn(
-                "Agent Anvil Leaderboard Data",
-                (dataset_dir / "README.md").read_text(encoding="utf-8"),
-            )
-            self.assertTrue((space_dir / "app.py").exists())
-            self.assertTrue((space_dir / "requirements.txt").exists())
 
-    def test_prepare_publish_directories_requires_generated_index(self) -> None:
-        from tempfile import TemporaryDirectory
+def test_prepare_publish_directories_requires_generated_index(tmp_path: Path) -> None:
+    module = load_publish_module()
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    write_minimal_repo(repo)
+    (repo / "leaderboard.json").unlink()
 
-        module = load_publish_module()
-        with TemporaryDirectory() as tmp:
-            tmp_path = Path(tmp)
-            repo = tmp_path / "repo"
-            repo.mkdir()
-            write_minimal_repo(repo)
-            (repo / "leaderboard.json").unlink()
-
-            with self.assertRaisesRegex(FileNotFoundError, "leaderboard.json"):
-                module.prepare_publish_directories(
-                    root=repo,
-                    output_dir=tmp_path / "out",
-                    dataset_id="ifif/agent-anvil-leaderboard-data",
-                )
+    with pytest.raises(FileNotFoundError, match="leaderboard.json"):
+        module.prepare_publish_directories(
+            root=repo,
+            output_dir=tmp_path / "out",
+            dataset_id="ifif/agent-anvil-leaderboard-data",
+        )
