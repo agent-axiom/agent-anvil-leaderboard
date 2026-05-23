@@ -19,6 +19,9 @@ Live views:
 
 ## Submit A Result
 
+Full contributor instructions are in [CONTRIBUTING.md](CONTRIBUTING.md). The
+accepted file contract is documented in [submissions/README.md](submissions/README.md).
+
 In your agent repository:
 
 ```bash
