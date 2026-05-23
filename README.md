@@ -55,7 +55,7 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.19 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
