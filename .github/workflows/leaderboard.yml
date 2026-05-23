@@ -54,7 +54,7 @@ jobs:
         run: uv run --with pytest pytest -q tests
       - name: Validate submissions and build index
         run: |
-          uvx --from git+https://github.com/agent-axiom/agent-anvil \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.19 \
             anvil leaderboard build submissions \
             --out leaderboard.csv \
             --json-out leaderboard.json \

@@ -4,6 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.19"
 
 
 def test_pr_template_contains_submission_checklist() -> None:
@@ -62,6 +63,19 @@ def test_github_actions_submission_example_is_copy_pasteable() -> None:
     assert "actions/upload-artifact@v7" in workflow
     assert "submission/" in workflow
     assert "uv sync --group dev" not in workflow
+
+
+def test_public_workflows_pin_agent_anvil_release() -> None:
+    paths = (
+        ROOT / ".github" / "workflows" / "leaderboard.yml",
+        ROOT / "README.md",
+        ROOT / "examples" / "github-actions-submission.yml",
+    )
+
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        assert AGENT_ANVIL_RELEASE_REF in text
+        assert "git+https://github.com/agent-axiom/agent-anvil \\" not in text
 
 
 def test_readme_links_verified_end_to_end_demo() -> None:
