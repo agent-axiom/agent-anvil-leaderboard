@@ -51,6 +51,7 @@ uvx --from git+https://github.com/agent-axiom/agent-anvil \
   --json-out leaderboard.json \
   --no-artifacts
 python3 scripts/verify_github_runs.py
+python3 scripts/apply_maintainer_reruns.py
 ```
 
 After a pull request is merged into `main`, the same workflow publishes the
@@ -64,6 +65,10 @@ when the repository secret `HF_TOKEN` is configured.
   that this repository verifies through the GitHub API
 - `maintainer_rerun`: independently reproduced by maintainers
 
+Maintainer reruns are stored as separate audit artifacts under
+`maintainer_reruns/`. They do not rewrite the original submission; CI applies
+them to the generated index after checking the rerun evidence.
+
 Public rows should not pretend to prevent all gaming. The benchmark is visible,
 so the leaderboard makes the verification boundary explicit.
 
@@ -72,6 +77,7 @@ so the leaderboard makes the verification boundary explicit.
 - `submissions/*.json`: accepted submission artifacts
 - `leaderboard.csv`: tabular index for quick inspection
 - `leaderboard.json`: machine-readable index for the public Space
+- `maintainer_reruns/*.json`: maintainer reproduction attestations
 - `space/`: Hugging Face Space scaffold
 
 ## Hugging Face Space

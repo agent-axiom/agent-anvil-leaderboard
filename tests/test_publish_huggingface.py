@@ -36,6 +36,11 @@ def test_prepare_publish_directories(tmp_path: Path) -> None:
     out = tmp_path / "out"
     repo.mkdir()
     write_minimal_repo(repo)
+    (repo / "maintainer_reruns").mkdir()
+    (repo / "maintainer_reruns" / "demo.json").write_text(
+        '{"schema_version":"agent-anvil.maintainer-rerun.v1"}',
+        encoding="utf-8",
+    )
 
     dataset_dir, space_dir = module.prepare_publish_directories(
         root=repo,
@@ -46,6 +51,7 @@ def test_prepare_publish_directories(tmp_path: Path) -> None:
     assert (dataset_dir / "leaderboard.csv").read_text(encoding="utf-8").startswith("rank")
     assert (dataset_dir / "leaderboard.json").read_text(encoding="utf-8").startswith("{")
     assert (dataset_dir / "submissions" / "demo.json").exists()
+    assert (dataset_dir / "maintainer_reruns" / "demo.json").exists()
     assert "Agent Anvil Leaderboard Data" in (dataset_dir / "README.md").read_text(
         encoding="utf-8"
     )

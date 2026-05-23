@@ -26,6 +26,7 @@ def test_contributing_guide_explains_submission_flow() -> None:
     assert "submissions/<agent-name>.json" in text
     assert "No Raw Traces" in text
     assert "Trust Levels" in text
+    assert "Maintainer Reruns" in text
 
 
 def test_submissions_readme_documents_file_contract() -> None:
@@ -36,3 +37,12 @@ def test_submissions_readme_documents_file_contract() -> None:
     assert "self_reported" in text
     assert "github_actions" in text
     assert "maintainer_rerun" in text
+
+
+def test_maintainer_rerun_readme_documents_attestation_contract() -> None:
+    text = (ROOT / "maintainer_reruns" / "README.md").read_text(encoding="utf-8")
+
+    assert "agent-anvil.maintainer-rerun.v1" in text
+    assert "submission_evidence_sha256" in text
+    assert "rerun.github_run_url" in text
+    assert "successful GitHub Actions run" in text

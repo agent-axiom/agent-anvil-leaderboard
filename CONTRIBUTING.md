@@ -47,3 +47,13 @@ metrics, benchmark hashes, artifact hashes, and trust metadata.
 
 The leaderboard makes this boundary explicit instead of pretending that a public
 benchmark cannot be gamed.
+
+## Maintainer Reruns
+
+Maintainers can promote a row to `maintainer_rerun` by adding a JSON attestation
+under `maintainer_reruns/`. The attestation must reference the original
+`submission_path`, match the row `evidence_sha256`, and include a successful
+GitHub Actions rerun URL plus repository/SHA metadata.
+
+Keep maintainer evidence separate from the original submission so reviewers can
+see both the submitter claim and the maintainer reproduction record.

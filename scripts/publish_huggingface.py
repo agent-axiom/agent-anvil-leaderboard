@@ -39,6 +39,8 @@ def prepare_publish_directories(
     _reset_dir(space_dir)
 
     shutil.copytree(root / "submissions", dataset_dir / "submissions")
+    if (root / "maintainer_reruns").exists():
+        shutil.copytree(root / "maintainer_reruns", dataset_dir / "maintainer_reruns")
     for filename in REQUIRED_ROOT_FILES:
         shutil.copy2(root / filename, dataset_dir / filename)
     _write_dataset_readme(dataset_dir)
