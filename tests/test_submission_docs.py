@@ -112,3 +112,5 @@ def test_space_invites_verified_submissions() -> None:
         assert "maintainer_rerun" in text
         assert "filter" in text.lower()
         assert "sort" in text.lower()
+        assert "freshness" in text.lower()
+        assert "stale" in text.lower()

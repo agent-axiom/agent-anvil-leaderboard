@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+from datetime import UTC, datetime
 from pathlib import Path
 
 
@@ -26,6 +27,7 @@ def sample_rows() -> list[dict[str, object]]:
             "answer_only_missed_failure_rate": 2.0,
             "total_trials": 50,
             "repo_url": "https://github.com/acme/safe-agent",
+            "generated_at": "2026-05-20T12:00:00Z",
         },
         {
             "agent_name": "Demo Agent",
@@ -37,6 +39,7 @@ def sample_rows() -> list[dict[str, object]]:
             "answer_only_missed_failure_rate": 70.0,
             "total_trials": 100,
             "repo_url": "https://github.com/agent-axiom/agent-anvil-demo-agent",
+            "generated_at": "2026-04-01T12:00:00Z",
         },
         {
             "agent_name": "Local Draft",
@@ -44,6 +47,7 @@ def sample_rows() -> list[dict[str, object]]:
             "trace_aware_pass_rate": 45.0,
             "answer_only_missed_failure_rate": 12.0,
             "total_trials": 10,
+            "generated_at": "2025-12-01T12:00:00Z",
         },
     ]
 
@@ -51,23 +55,27 @@ def sample_rows() -> list[dict[str, object]]:
 def test_normalize_rows_adds_rank_badges_and_defaults() -> None:
     view = load_view_module()
 
-    rows = view.normalize_rows({"rows": sample_rows()})
+    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
 
     assert rows[0]["rank"] == 1
     assert rows[0]["trust_badge"] == "[maintainer rerun]"
+    assert rows[0]["freshness_badge"] == "[fresh]"
     assert rows[1]["trust_badge"] == "[GitHub Actions]"
+    assert rows[1]["freshness_badge"] == "[aging]"
     assert rows[2]["agent_version"] == ""
+    assert rows[2]["freshness_badge"] == "[stale]"
 
 
 def test_filter_rows_searches_filters_and_sorts() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()})
+    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
 
     filtered = view.filter_rows(
         rows,
         search="agent",
         trust_level="github_actions",
         min_trials=25,
+        freshness="all",
         sort_by="trace_aware_pass_rate",
         descending=True,
     )
@@ -77,13 +85,14 @@ def test_filter_rows_searches_filters_and_sorts() -> None:
 
 def test_filter_rows_can_sort_by_missed_failure_rate_ascending() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()})
+    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
 
     filtered = view.filter_rows(
         rows,
         search="",
         trust_level="all",
         min_trials=0,
+        freshness="all",
         sort_by="answer_only_missed_failure_rate",
         descending=False,
     )
@@ -97,23 +106,43 @@ def test_filter_rows_can_sort_by_missed_failure_rate_ascending() -> None:
 
 def test_summary_markdown_highlights_trust_mix_and_missed_failures() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()})
+    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
 
     summary = view.summary_markdown(rows)
 
     assert "Rows: 3" in summary
     assert "Best trace-aware pass rate: 91.5%" in summary
     assert "Answer-only missed failures: 71" in summary
+    assert "Stale rows: 1" in summary
     assert "maintainer rerun: 1" in summary
     assert "GitHub Actions: 1" in summary
 
 
+def test_filter_rows_can_filter_stale_submissions() -> None:
+    view = load_view_module()
+    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+
+    filtered = view.filter_rows(
+        rows,
+        search="",
+        trust_level="all",
+        min_trials=0,
+        freshness="stale",
+        sort_by="rank",
+        descending=False,
+    )
+
+    assert [row["agent_name"] for row in filtered] == ["Local Draft"]
+
+
 def test_table_values_use_public_columns() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()})
+    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
 
     table = view.table_values(rows[:1])
 
     assert view.DISPLAY_COLUMNS[0] == "rank"
     assert view.DISPLAY_COLUMNS[-1] == "evidence_sha256"
+    assert "freshness_badge" in view.DISPLAY_COLUMNS
+    assert "generated_at" in view.DISPLAY_COLUMNS
     assert table[0][view.DISPLAY_COLUMNS.index("agent_name")] == "Safe Agent"

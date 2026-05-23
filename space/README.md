@@ -27,10 +27,10 @@ LEADERBOARD_INDEX_URL=https://raw.githubusercontent.com/agent-axiom/agent-anvil-
 The app does not execute user agents. It only reads aggregate leaderboard rows
 that were validated by this repository's GitHub Actions workflow.
 
-The Space includes a snapshot summary, trust-level filters, repository/name
-search, minimum-trial filtering, and sortable trace-aware metrics so users can
-quickly separate self-reported rows from GitHub Actions and maintainer-verified
-results.
+The Space includes a snapshot summary, trust-level filters, freshness/stale
+badges, repository/name search, minimum-trial filtering, and sortable
+trace-aware metrics so users can quickly separate self-reported rows from
+GitHub Actions and maintainer-verified results.
 
 ## Submit your agent
 
