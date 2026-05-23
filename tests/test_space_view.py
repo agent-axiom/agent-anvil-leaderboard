@@ -25,9 +25,14 @@ def sample_rows() -> list[dict[str, object]]:
             "final_answer_pass_rate": 99.0,
             "answer_only_missed_failures": 1,
             "answer_only_missed_failure_rate": 2.0,
-            "total_trials": 50,
+            "total_trials": 100,
             "repo_url": "https://github.com/acme/safe-agent",
             "generated_at": "2026-05-20T12:00:00Z",
+            "benchmark_name": "agent_anvil_trace_eval_benchmark",
+            "benchmark_manifest_sha256": "a" * 64,
+            "benchmark_scenario_count": 5,
+            "submission_schema_version": "agent-anvil.leaderboard.v1",
+            "submission_generated_by": "agent-anvil/0.2.20",
         },
         {
             "agent_name": "Demo Agent",
@@ -40,6 +45,11 @@ def sample_rows() -> list[dict[str, object]]:
             "total_trials": 100,
             "repo_url": "https://github.com/agent-axiom/agent-anvil-demo-agent",
             "generated_at": "2026-04-01T12:00:00Z",
+            "benchmark_name": "agent_anvil_trace_eval_benchmark",
+            "benchmark_manifest_sha256": "b" * 64,
+            "benchmark_scenario_count": 5,
+            "submission_schema_version": "agent-anvil.leaderboard.v1",
+            "submission_generated_by": "agent-anvil/0.2.19",
         },
         {
             "agent_name": "Local Draft",
@@ -48,6 +58,10 @@ def sample_rows() -> list[dict[str, object]]:
             "answer_only_missed_failure_rate": 12.0,
             "total_trials": 10,
             "generated_at": "2025-12-01T12:00:00Z",
+            "benchmark_name": "custom_agent_benchmark",
+            "benchmark_scenario_count": 1,
+            "submission_schema_version": "agent-anvil.leaderboard.v1",
+            "submission_generated_by": "agent-anvil/0.2.20",
         },
     ]
 
@@ -55,20 +69,34 @@ def sample_rows() -> list[dict[str, object]]:
 def test_normalize_rows_adds_rank_badges_and_defaults() -> None:
     view = load_view_module()
 
-    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
 
     assert rows[0]["rank"] == 1
     assert rows[0]["trust_badge"] == "[maintainer rerun]"
     assert rows[0]["freshness_badge"] == "[fresh]"
+    assert rows[0]["compatibility_badge"] == "[agent-anvil benchmark]"
+    assert rows[0]["health_badge"] == "[healthy]"
     assert rows[1]["trust_badge"] == "[GitHub Actions]"
     assert rows[1]["freshness_badge"] == "[aging]"
     assert rows[2]["agent_version"] == ""
     assert rows[2]["freshness_badge"] == "[stale]"
+    assert rows[2]["compatibility_badge"] == "[custom benchmark]"
+    assert rows[2]["health_badge"] == "[needs review]"
+    assert rows[2]["health_issues"] == [
+        "self_reported",
+        "stale",
+        "custom_benchmark",
+        "low_trials",
+    ]
 
 
 def test_filter_rows_searches_filters_and_sorts() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
 
     filtered = view.filter_rows(
         rows,
@@ -76,6 +104,8 @@ def test_filter_rows_searches_filters_and_sorts() -> None:
         trust_level="github_actions",
         min_trials=25,
         freshness="all",
+        compatibility="all",
+        health="all",
         sort_by="trace_aware_pass_rate",
         descending=True,
     )
@@ -85,7 +115,9 @@ def test_filter_rows_searches_filters_and_sorts() -> None:
 
 def test_filter_rows_can_sort_by_missed_failure_rate_ascending() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
 
     filtered = view.filter_rows(
         rows,
@@ -93,6 +125,8 @@ def test_filter_rows_can_sort_by_missed_failure_rate_ascending() -> None:
         trust_level="all",
         min_trials=0,
         freshness="all",
+        compatibility="all",
+        health="all",
         sort_by="answer_only_missed_failure_rate",
         descending=False,
     )
@@ -106,7 +140,9 @@ def test_filter_rows_can_sort_by_missed_failure_rate_ascending() -> None:
 
 def test_summary_markdown_highlights_trust_mix_and_missed_failures() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
 
     summary = view.summary_markdown(rows)
 
@@ -114,13 +150,17 @@ def test_summary_markdown_highlights_trust_mix_and_missed_failures() -> None:
     assert "Best trace-aware pass rate: 91.5%" in summary
     assert "Answer-only missed failures: 71" in summary
     assert "Stale rows: 1" in summary
+    assert "Needs review rows: 1" in summary
+    assert "Custom benchmark rows: 1" in summary
     assert "maintainer rerun: 1" in summary
     assert "GitHub Actions: 1" in summary
 
 
 def test_filter_rows_can_filter_stale_submissions() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
 
     filtered = view.filter_rows(
         rows,
@@ -128,6 +168,29 @@ def test_filter_rows_can_filter_stale_submissions() -> None:
         trust_level="all",
         min_trials=0,
         freshness="stale",
+        compatibility="all",
+        health="all",
+        sort_by="rank",
+        descending=False,
+    )
+
+    assert [row["agent_name"] for row in filtered] == ["Local Draft"]
+
+
+def test_filter_rows_can_filter_compatibility_and_health() -> None:
+    view = load_view_module()
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
+
+    filtered = view.filter_rows(
+        rows,
+        search="",
+        trust_level="all",
+        min_trials=0,
+        freshness="all",
+        compatibility="custom",
+        health="needs_review",
         sort_by="rank",
         descending=False,
     )
@@ -137,12 +200,16 @@ def test_filter_rows_can_filter_stale_submissions() -> None:
 
 def test_table_values_use_public_columns() -> None:
     view = load_view_module()
-    rows = view.normalize_rows({"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC))
+    rows = view.normalize_rows(
+        {"rows": sample_rows()}, now=datetime(2026, 5, 23, tzinfo=UTC)
+    )
 
     table = view.table_values(rows[:1])
 
     assert view.DISPLAY_COLUMNS[0] == "rank"
     assert view.DISPLAY_COLUMNS[-1] == "evidence_sha256"
     assert "freshness_badge" in view.DISPLAY_COLUMNS
+    assert "compatibility_badge" in view.DISPLAY_COLUMNS
+    assert "health_badge" in view.DISPLAY_COLUMNS
     assert "generated_at" in view.DISPLAY_COLUMNS
     assert table[0][view.DISPLAY_COLUMNS.index("agent_name")] == "Safe Agent"
