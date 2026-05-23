@@ -19,6 +19,7 @@ REQUIRED_ROOT_FILES = [
 REQUIRED_SPACE_FILES = [
     "README.md",
     "app.py",
+    "leaderboard_view.py",
     "requirements.txt",
 ]
 

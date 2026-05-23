@@ -102,3 +102,5 @@ def test_space_invites_verified_submissions() -> None:
         assert "self_reported" in text
         assert "github_actions" in text
         assert "maintainer_rerun" in text
+        assert "filter" in text.lower()
+        assert "sort" in text.lower()

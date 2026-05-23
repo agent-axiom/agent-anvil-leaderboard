@@ -27,6 +27,10 @@ def write_minimal_repo(root: Path) -> None:
         encoding="utf-8",
     )
     (root / "space" / "app.py").write_text("print('space')\n", encoding="utf-8")
+    (root / "space" / "leaderboard_view.py").write_text(
+        "DISPLAY_COLUMNS = []\n",
+        encoding="utf-8",
+    )
     (root / "space" / "requirements.txt").write_text("gradio\n", encoding="utf-8")
 
 
@@ -56,6 +60,7 @@ def test_prepare_publish_directories(tmp_path: Path) -> None:
         encoding="utf-8"
     )
     assert (space_dir / "app.py").exists()
+    assert (space_dir / "leaderboard_view.py").exists()
     assert (space_dir / "requirements.txt").exists()
 
 
