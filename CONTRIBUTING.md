@@ -33,6 +33,13 @@ into `.github/workflows/` in your agent repository. That workflow exports a
 submission with GitHub run metadata and uploads a `submission/*.json` artifact
 you can add to this repository.
 
+For a complete public example, see
+[agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent).
+Its successful
+[GitHub Actions run 26335581868](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26335581868)
+produced the verified submission accepted in
+[agent-anvil-leaderboard#1](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/1).
+
 CI rebuilds `leaderboard.csv` and `leaderboard.json`. Do not edit generated
 leaderboard index files manually unless you are a maintainer repairing CI
 output.
