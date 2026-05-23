@@ -68,5 +68,9 @@ under `maintainer_reruns/`. The attestation must reference the original
 `submission_path`, match the row `evidence_sha256`, and include a successful
 GitHub Actions rerun URL plus repository/SHA metadata.
 
+The **Create Maintainer Rerun Attestation** workflow can generate and validate
+that JSON from workflow inputs, then upload the attestation as a reviewable
+artifact for a pull request.
+
 Keep maintainer evidence separate from the original submission so reviewers can
 see both the submitter claim and the maintainer reproduction record.

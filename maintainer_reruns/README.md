@@ -28,3 +28,8 @@ Example:
 
 Do not edit the original submission when adding a maintainer rerun. Keep the
 maintainer evidence separate so the provenance remains visible.
+
+Maintainers can also run the **Create Maintainer Rerun Attestation** workflow
+from the Actions tab. It accepts the same fields, validates the generated JSON
+against the current leaderboard index, and uploads a `maintainer-rerun-attestation`
+artifact that can be added to this directory in a pull request.

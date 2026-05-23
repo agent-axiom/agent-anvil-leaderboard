@@ -1,0 +1,80 @@
+name: Create Maintainer Rerun Attestation
+
+on:
+  workflow_dispatch:
+    inputs:
+      submission_path:
+        description: "Existing submission path, for example submissions/acme-agent.json"
+        required: true
+        type: string
+      submission_evidence_sha256:
+        description: "Current evidence_sha256 from the leaderboard row"
+        required: true
+        type: string
+      maintainer:
+        description: "Maintainer handle or team"
+        required: true
+        type: string
+      rerun_github_run_url:
+        description: "Successful GitHub Actions rerun URL"
+        required: true
+        type: string
+      rerun_github_repository:
+        description: "Repository that produced the rerun, owner/repo"
+        required: true
+        type: string
+      rerun_github_sha:
+        description: "Commit SHA verified by the rerun"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  attestation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v8.1.0
+        with:
+          enable-cache: true
+      - name: Build current leaderboard index
+        run: |
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.19 \
+            anvil leaderboard build submissions \
+            --out leaderboard.csv \
+            --json-out leaderboard.json \
+            --no-artifacts
+      - name: Write maintainer rerun attestation
+        run: |
+          python3 scripts/write_maintainer_rerun.py \
+            --output-dir generated-maintainer-reruns \
+            --submission-path "${{ inputs.submission_path }}" \
+            --submission-evidence-sha256 "${{ inputs.submission_evidence_sha256 }}" \
+            --maintainer "${{ inputs.maintainer }}" \
+            --rerun-github-run-url "${{ inputs.rerun_github_run_url }}" \
+            --rerun-github-repository "${{ inputs.rerun_github_repository }}" \
+            --rerun-github-sha "${{ inputs.rerun_github_sha }}"
+      - name: Validate generated attestation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p maintainer_reruns
+          cp generated-maintainer-reruns/*.json maintainer_reruns/
+          python3 scripts/apply_maintainer_reruns.py
+      - name: Prepare summary
+        run: |
+          generated_path="$(find generated-maintainer-reruns -name '*.json' -print -quit)"
+          {
+            echo "## Maintainer rerun attestation"
+            echo
+            echo "Generated artifact: \`${generated_path}\`"
+            echo
+            echo "Open a pull request that adds this JSON file under \`maintainer_reruns/\`."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: maintainer-rerun-attestation
+          path: generated-maintainer-reruns/*.json
