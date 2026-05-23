@@ -52,6 +52,9 @@ FRESHNESS_LABELS = {
     "unknown": "[unknown age]",
 }
 
+FRESH_DAYS = 30
+AGING_DAYS = 90
+
 SORT_COLUMNS = {
     "trace_aware_pass_rate",
     "final_answer_pass_rate",
@@ -173,9 +176,9 @@ def _freshness_status(value: str, *, now: datetime) -> str:
     if generated_at is None:
         return "unknown"
     age_days = (now - generated_at).days
-    if age_days <= 30:
+    if age_days <= FRESH_DAYS:
         return "fresh"
-    if age_days <= 90:
+    if age_days <= AGING_DAYS:
         return "aging"
     return "stale"
 
