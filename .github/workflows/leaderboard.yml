@@ -11,6 +11,7 @@ on:
       - "maintainer_reruns/**"
       - "space/**"
       - "scripts/apply_maintainer_reruns.py"
+      - "scripts/check_submission_health.py"
       - "scripts/publish_huggingface.py"
       - "scripts/verify_github_runs.py"
       - "scripts/write_maintainer_rerun.py"
@@ -30,6 +31,7 @@ on:
       - "maintainer_reruns/**"
       - "space/**"
       - "scripts/apply_maintainer_reruns.py"
+      - "scripts/check_submission_health.py"
       - "scripts/publish_huggingface.py"
       - "scripts/verify_github_runs.py"
       - "scripts/write_maintainer_rerun.py"
@@ -58,11 +60,13 @@ jobs:
         run: uv run --with pytest pytest -q tests
       - name: Validate submissions and build index
         run: |
-          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.19 \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.20 \
             anvil leaderboard build submissions \
             --out leaderboard.csv \
             --json-out leaderboard.json \
             --no-artifacts
+      - name: Check submission health
+        run: python3 scripts/check_submission_health.py
       - name: Verify GitHub Actions evidence
         env:
           GH_TOKEN: ${{ github.token }}

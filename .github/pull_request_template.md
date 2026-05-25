@@ -6,6 +6,8 @@ Submission file:
 - [ ] The file name is stable and readable, for example `acme-support-agent.json`.
 - [ ] I generated the file with `anvil leaderboard export`.
 - [ ] I ran `anvil leaderboard validate submissions/<agent-name>.json`.
+- [ ] I checked CI health warnings for benchmark compatibility, stale evidence,
+      and low trial counts.
 
 Privacy and artifact boundary:
 

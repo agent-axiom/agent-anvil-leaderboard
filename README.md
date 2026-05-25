@@ -55,11 +55,12 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.19 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.20 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
   --no-artifacts
+python3 scripts/check_submission_health.py
 python3 scripts/verify_github_runs.py
 python3 scripts/apply_maintainer_reruns.py
 ```
@@ -81,6 +82,15 @@ them to the generated index after checking the rerun evidence.
 
 Public rows should not pretend to prevent all gaming. The benchmark is visible,
 so the leaderboard makes the verification boundary explicit.
+
+## Submission Health
+
+CI runs `scripts/check_submission_health.py` after rebuilding the generated
+index. The check fails malformed rows, verifies that benchmark hash metadata is
+present in `leaderboard.json`, and emits warnings for self-reported, stale, or
+low-trial submissions. The Space displays benchmark compatibility and health
+badges so readers can distinguish the canonical Agent Anvil benchmark from
+custom experiments.
 
 ## Files
 
