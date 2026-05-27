@@ -69,8 +69,8 @@ uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.22 \
   --no-artifacts
 python3 scripts/check_submission_health.py
 python3 scripts/verify_github_runs.py
-python3 scripts/verify_attestations.py --warn-only
 python3 scripts/apply_maintainer_reruns.py
+python3 scripts/verify_attestations.py --warn-only
 ```
 
 After a pull request is merged into `main`, the same workflow publishes the
@@ -81,7 +81,8 @@ when the repository secret `HF_TOKEN` is configured.
 
 - `self_reported`: generated outside recognized CI
 - `github_actions`: generated in GitHub Actions and includes a public run URL
-  that this repository verifies through the GitHub API
+  that this repository verifies through the GitHub API, plus a GitHub artifact
+  attestation for the submitted JSON
 - `maintainer_rerun`: independently reproduced by maintainers
 
 Maintainer reruns are stored as separate audit artifacts under
@@ -112,14 +113,21 @@ present in `leaderboard.json`, and emits warnings for self-reported, stale, or
 low-trial submissions. The Space displays benchmark compatibility and health
 badges so readers can distinguish the canonical Agent Anvil benchmark from
 custom experiments. Pull requests also get a sticky PR comment with the same
-health summary, so reviewers can see trust warnings without opening CI logs.
+health summary and provenance table, so reviewers can see trust warnings, run
+metadata, and attestation status without opening CI logs.
 
 ## Artifact attestation warnings
 
 For `github_actions` rows, CI also runs `scripts/verify_attestations.py` to ask
 GitHub whether the submitted JSON has a verifiable artifact attestation from the
-claimed repository. This is warn-only today because older accepted submissions
-predate attestation support, but new copy-paste workflows should include it.
+claimed repository. Existing rows remain visible with provenance badges. New `github_actions` rows without attestations fail CI, while `self_reported` rows remain accepted and explicitly labeled as unverified.
+
+The generated `leaderboard.json` and `leaderboard.csv` include:
+
+- `provenance_status`: `attested`, `missing`, `self_reported`, or
+  `maintainer_rerun`
+- `provenance_badge`: compact display label for the public Space and dataset
+- `provenance_warning`: verifier output when provenance is missing or invalid
 
 ## Files
 

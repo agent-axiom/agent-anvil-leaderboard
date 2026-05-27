@@ -57,6 +57,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: astral-sh/setup-uv@v8.1.0
         with:
           enable-cache: true
@@ -78,6 +80,39 @@ jobs:
           exit_code=$?;
           echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT";
           exit 0
+      - name: Verify GitHub Actions evidence
+        id: github-evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          python3 scripts/verify_github_runs.py
+          exit_code=$?
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Apply maintainer reruns
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/apply_maintainer_reruns.py
+      - name: Verify artifact attestations
+        id: artifact-attestations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            python3 scripts/verify_attestations.py \
+              --warn-only \
+              --strict-new-submissions-from "origin/${{ github.base_ref }}" \
+              --summary-out agent-anvil-attestation-review.md
+          else
+            python3 scripts/verify_attestations.py \
+              --warn-only \
+              --summary-out agent-anvil-attestation-review.md
+          fi
+          exit_code=$?
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+          exit 0
       - name: Comment submission review
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v8
@@ -86,7 +121,9 @@ jobs:
           script: |
             const fs = require("fs");
             const marker = "<!-- agent-anvil-leaderboard-review -->";
-            const body = `${marker}\n${fs.readFileSync("agent-anvil-submission-review.md", "utf8")}`;
+            const health = fs.readFileSync("agent-anvil-submission-review.md", "utf8");
+            const provenance = fs.readFileSync("agent-anvil-attestation-review.md", "utf8");
+            const body = `${marker}\n${health}\n\n${provenance}`;
             const { owner, repo } = context.repo;
             const issue_number = context.payload.pull_request.number;
             const comments = await github.rest.issues.listComments({
@@ -116,18 +153,12 @@ jobs:
       - name: Fail on submission health errors
         if: steps.submission-health.outputs.exit_code != '0'
         run: exit "${{ steps.submission-health.outputs.exit_code }}"
-      - name: Verify GitHub Actions evidence
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 scripts/verify_github_runs.py
-      - name: Apply maintainer reruns
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 scripts/apply_maintainer_reruns.py
-      - name: Verify artifact attestations
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 scripts/verify_attestations.py --warn-only
+      - name: Fail on GitHub Actions evidence errors
+        if: steps.github-evidence.outputs.exit_code != '0'
+        run: exit "${{ steps.github-evidence.outputs.exit_code }}"
+      - name: Fail on provenance policy errors
+        if: steps.artifact-attestations.outputs.exit_code != '0'
+        run: exit "${{ steps.artifact-attestations.outputs.exit_code }}"
       - name: Prepare Hugging Face payload
         run: python3 scripts/publish_huggingface.py --dry-run
       - uses: actions/upload-artifact@v7.0.1

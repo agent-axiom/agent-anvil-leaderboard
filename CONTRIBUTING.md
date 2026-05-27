@@ -61,8 +61,8 @@ metrics, benchmark hashes, artifact hashes, and trust metadata.
 - `github_actions`: generated in GitHub Actions and includes a public run URL.
   The leaderboard CI verifies that the run exists, completed successfully, and
   matches `verification.github_repository` and `verification.github_sha`. New
-  rows should also include a verifiable GitHub artifact attestation for the
-  submitted JSON.
+  rows must also include a verifiable GitHub artifact attestation for the
+  submitted JSON; CI fails new `github_actions` rows that cannot be attested.
 - `maintainer_rerun`: independently reproduced by maintainers.
 
 The leaderboard makes this boundary explicit instead of pretending that a public
