@@ -16,11 +16,26 @@ TRUST_LABELS = {
     "maintainer_rerun": "maintainer rerun",
 }
 
+PROVENANCE_BADGES = {
+    "attested": "[attested]",
+    "missing": "[missing attestation]",
+    "self_reported": "[self-reported]",
+    "maintainer_rerun": "[maintainer rerun]",
+}
+
+PROVENANCE_LABELS = {
+    "attested": "attested",
+    "missing": "missing attestation",
+    "self_reported": "self-reported",
+    "maintainer_rerun": "maintainer rerun",
+}
+
 DISPLAY_COLUMNS = [
     "rank",
     "agent_name",
     "agent_version",
     "trust_badge",
+    "provenance_badge",
     "freshness_badge",
     "compatibility_badge",
     "health_badge",
@@ -44,6 +59,7 @@ ALL_COLUMNS = [
     "submission_schema_version",
     "submission_generated_by",
     "trust_level",
+    "provenance_status",
     "commit_sha",
     "maintainer",
     "maintainer_rerun_repository",
@@ -103,6 +119,11 @@ def normalize_rows(
         row["trust_badge"] = TRUST_BADGES.get(
             str(row.get("trust_level") or ""),
             str(row.get("trust_level") or ""),
+        )
+        provenance = _provenance_status(row)
+        row["provenance_status"] = provenance
+        row["provenance_badge"] = PROVENANCE_BADGES.get(
+            provenance, "[unknown provenance]"
         )
         freshness = _freshness_status(str(row.get("generated_at") or ""), now=now)
         row["freshness"] = freshness
@@ -182,6 +203,13 @@ def summary_markdown(rows: list[dict[str, Any]]) -> str:
         f"{TRUST_LABELS.get(level, level or 'unknown')}: {count}"
         for level, count in sorted(trust_counts.items())
     )
+    provenance_counts = Counter(
+        str(row.get("provenance_status") or "missing") for row in rows
+    )
+    provenance_mix = ", ".join(
+        f"{PROVENANCE_LABELS.get(status, status or 'unknown')}: {count}"
+        for status, count in sorted(provenance_counts.items())
+    )
 
     return "\n".join(
         [
@@ -194,6 +222,7 @@ def summary_markdown(rows: list[dict[str, Any]]) -> str:
             f"Needs review rows: {needs_review_rows}",
             f"Custom benchmark rows: {custom_benchmark_rows}",
             f"Trust mix: {trust_mix}",
+            f"Provenance mix: {provenance_mix}",
         ]
     )
 
@@ -257,12 +286,28 @@ def _compatibility_status(row: dict[str, Any]) -> str:
     return "agent_anvil"
 
 
+def _provenance_status(row: dict[str, Any]) -> str:
+    explicit = str(row.get("provenance_status") or "").strip()
+    if explicit:
+        return explicit
+    trust_level = str(row.get("trust_level") or "")
+    if trust_level == "github_actions":
+        return "missing"
+    if trust_level == "maintainer_rerun":
+        return "maintainer_rerun"
+    if trust_level == "self_reported":
+        return "self_reported"
+    return "missing"
+
+
 def _health_issues(
     row: dict[str, Any], *, freshness: str, compatibility: str
 ) -> list[str]:
     issues: list[str] = []
     if str(row.get("trust_level") or "") == "self_reported":
         issues.append("self_reported")
+    if str(row.get("provenance_status") or "") == "missing":
+        issues.append("missing_attestation")
     if freshness == "stale":
         issues.append("stale")
     if compatibility == "custom":

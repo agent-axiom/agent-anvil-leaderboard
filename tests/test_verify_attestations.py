@@ -44,7 +44,9 @@ def completed(returncode: int = 0) -> subprocess.CompletedProcess[str]:
     )
 
 
-def test_verify_all_submissions_ignores_self_reported_rows(tmp_path: Path) -> None:
+def test_verify_all_submissions_labels_self_reported_rows_without_network(
+    tmp_path: Path,
+) -> None:
     module = load_verify_module()
     submissions = tmp_path / "submissions"
     submissions.mkdir()
@@ -53,12 +55,14 @@ def test_verify_all_submissions_ignores_self_reported_rows(tmp_path: Path) -> No
         {"verification": {"trust_level": "self_reported"}},
     )
 
-    reports = module.verify_all_submissions(
+    results = module.verify_all_submissions(
         submissions_dir=submissions,
         run_command=lambda command: (_ for _ in ()).throw(AssertionError(command)),
     )
 
-    assert reports == []
+    assert len(results) == 1
+    assert results[0].status == "self_reported"
+    assert results[0].warning == ""
 
 
 def test_verify_all_submissions_invokes_gh_for_github_actions_rows(tmp_path: Path) -> None:
@@ -69,12 +73,14 @@ def test_verify_all_submissions_invokes_gh_for_github_actions_rows(tmp_path: Pat
     write_submission(submission_path, github_actions_submission())
     seen: list[list[str]] = []
 
-    reports = module.verify_all_submissions(
+    results = module.verify_all_submissions(
         submissions_dir=submissions,
         run_command=lambda command: seen.append(command) or completed(),
     )
 
-    assert reports == []
+    assert len(results) == 1
+    assert results[0].status == "attested"
+    assert results[0].warning == ""
     assert seen == [
         [
             "gh",
@@ -118,3 +124,36 @@ def test_main_fails_in_strict_mode_when_attestation_is_missing(tmp_path: Path) -
     )
 
     assert exit_code == 1
+
+
+def test_main_updates_leaderboard_json_with_provenance_status(tmp_path: Path) -> None:
+    module = load_verify_module()
+    submissions = tmp_path / "submissions"
+    submissions.mkdir()
+    submission_path = submissions / "demo.json"
+    write_submission(submission_path, github_actions_submission())
+    leaderboard_json = tmp_path / "leaderboard.json"
+    leaderboard_json.write_text(
+        json.dumps(
+            {
+                "schema_version": "agent-anvil.leaderboard.index.v1",
+                "rows": [
+                    {
+                        "submission_path": str(submission_path),
+                        "trust_level": "github_actions",
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    exit_code = module.main(
+        ["--submissions-dir", str(submissions), "--leaderboard-json", str(leaderboard_json)],
+        run_command=lambda command: completed(),
+    )
+
+    assert exit_code == 0
+    payload = json.loads(leaderboard_json.read_text(encoding="utf-8"))
+    assert payload["rows"][0]["provenance_status"] == "attested"
+    assert payload["rows"][0]["provenance_badge"] == "[attested]"

@@ -1,25 +1,25 @@
 {
   "schema_version": "agent-anvil.leaderboard.index.v1",
-  "generated_at": "2026-05-23T17:30:50.898609Z",
-  "generated_by": "agent-anvil/0.2.20",
+  "generated_at": "2026-05-27T22:36:16.308922Z",
+  "generated_by": "agent-anvil/0.2.22",
   "rows": [
     {
       "rank": 1,
       "submission_path": "submissions/agent-axiom-agent-anvil-demo-agent.json",
       "submission_schema_version": "agent-anvil.leaderboard.v1",
-      "submission_generated_by": "agent-anvil/0.2.19",
+      "submission_generated_by": "agent-anvil/0.2.22",
       "agent_name": "Agent Anvil Demo Agent",
-      "agent_version": "ebc390cb05de10efb80d852d7dd140898a853b83",
+      "agent_version": "1f8134d3ce4ad7f660267773badd47a83c75b958",
       "repo_url": "https://github.com/agent-axiom/agent-anvil-demo-agent",
-      "commit_sha": "ebc390cb05de10efb80d852d7dd140898a853b83",
+      "commit_sha": "1f8134d3ce4ad7f660267773badd47a83c75b958",
       "benchmark_name": "agent_anvil_trace_eval_benchmark",
       "benchmark_description": "A compact offline benchmark for comparing final-answer-only checks with trace-aware Agent Anvil assertions across tool-use safety scenarios.\n",
       "benchmark_manifest_sha256": "5aa7a1b59a262ed964d3bcab3afb06c2ee13bee81f63bd63f0122990300b4cb7",
       "benchmark_scenario_count": 5,
       "trust_level": "github_actions",
-      "evidence_sha256": "1cd08e0f68f1c156d5ba3a2a84422d633b8d9c980b12b0831bb22ca9c9099a3c",
-      "github_run_url": "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26336840349",
-      "generated_at": "2026-05-23T15:41:36.969543Z",
+      "evidence_sha256": "1866d63308e750b52c0253571a93b3a4b1854207a6428eea77c253776fc4d3f2",
+      "github_run_url": "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290",
+      "generated_at": "2026-05-27T22:30:46.004440Z",
       "total_trials": 100,
       "final_answer_pass_rate": 100.0,
       "trace_aware_pass_rate": 30.0,
@@ -28,7 +28,9 @@
       "outcome_counts": {
         "policy_violation": 70,
         "pass": 30
-      }
+      },
+      "provenance_status": "attested",
+      "provenance_badge": "[attested]"
     },
     {
       "rank": 2,
@@ -55,7 +57,9 @@
       "outcome_counts": {
         "policy_violation": 70,
         "pass": 30
-      }
+      },
+      "provenance_status": "self_reported",
+      "provenance_badge": "[self-reported]"
     }
   ]
 }

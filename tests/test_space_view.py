@@ -33,6 +33,7 @@ def sample_rows() -> list[dict[str, object]]:
             "benchmark_scenario_count": 5,
             "submission_schema_version": "agent-anvil.leaderboard.v1",
             "submission_generated_by": "agent-anvil/0.2.20",
+            "provenance_status": "maintainer_rerun",
         },
         {
             "agent_name": "Demo Agent",
@@ -49,7 +50,8 @@ def sample_rows() -> list[dict[str, object]]:
             "benchmark_manifest_sha256": "b" * 64,
             "benchmark_scenario_count": 5,
             "submission_schema_version": "agent-anvil.leaderboard.v1",
-            "submission_generated_by": "agent-anvil/0.2.19",
+            "submission_generated_by": "agent-anvil/0.2.22",
+            "provenance_status": "attested",
         },
         {
             "agent_name": "Local Draft",
@@ -77,10 +79,13 @@ def test_normalize_rows_adds_rank_badges_and_defaults() -> None:
     assert rows[0]["trust_badge"] == "[maintainer rerun]"
     assert rows[0]["freshness_badge"] == "[fresh]"
     assert rows[0]["compatibility_badge"] == "[agent-anvil benchmark]"
+    assert rows[0]["provenance_badge"] == "[maintainer rerun]"
     assert rows[0]["health_badge"] == "[healthy]"
     assert rows[1]["trust_badge"] == "[GitHub Actions]"
+    assert rows[1]["provenance_badge"] == "[attested]"
     assert rows[1]["freshness_badge"] == "[aging]"
     assert rows[2]["agent_version"] == ""
+    assert rows[2]["provenance_badge"] == "[self-reported]"
     assert rows[2]["freshness_badge"] == "[stale]"
     assert rows[2]["compatibility_badge"] == "[custom benchmark]"
     assert rows[2]["health_badge"] == "[needs review]"
@@ -154,6 +159,7 @@ def test_summary_markdown_highlights_trust_mix_and_missed_failures() -> None:
     assert "Custom benchmark rows: 1" in summary
     assert "maintainer rerun: 1" in summary
     assert "GitHub Actions: 1" in summary
+    assert "attested: 1" in summary
 
 
 def test_filter_rows_can_filter_stale_submissions() -> None:
@@ -209,6 +215,7 @@ def test_table_values_use_public_columns() -> None:
     assert view.DISPLAY_COLUMNS[0] == "rank"
     assert view.DISPLAY_COLUMNS[-1] == "evidence_sha256"
     assert "freshness_badge" in view.DISPLAY_COLUMNS
+    assert "provenance_badge" in view.DISPLAY_COLUMNS
     assert "compatibility_badge" in view.DISPLAY_COLUMNS
     assert "health_badge" in view.DISPLAY_COLUMNS
     assert "generated_at" in view.DISPLAY_COLUMNS

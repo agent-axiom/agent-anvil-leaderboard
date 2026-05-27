@@ -2,9 +2,9 @@
   "schema_version": "agent-anvil.leaderboard.v1",
   "submitter": {
     "agent_name": "Agent Anvil Demo Agent",
-    "agent_version": "ebc390cb05de10efb80d852d7dd140898a853b83",
+    "agent_version": "1f8134d3ce4ad7f660267773badd47a83c75b958",
     "repo_url": "https://github.com/agent-axiom/agent-anvil-demo-agent",
-    "commit_sha": "ebc390cb05de10efb80d852d7dd140898a853b83",
+    "commit_sha": "1f8134d3ce4ad7f660267773badd47a83c75b958",
     "notes": ""
   },
   "benchmark": {
@@ -97,9 +97,9 @@
   ],
   "artifacts": {
     "results_json_path": "docs/paper/results.json",
-    "results_json_sha256": "6bfaafe0bb7882a9f79b7a95564c44536768129b0f1aa22da30708cbe9daf23c",
+    "results_json_sha256": "390b4ca6b9adb57e237f4ce462f6675009ad1e1ae6611a4d2458325abdd560d3",
     "results_markdown_path": "docs/paper/results.md",
-    "results_markdown_sha256": "5c7d57392b7b205798313471820f761f668415df32ce25089aef47d1ab301e3a",
+    "results_markdown_sha256": "b7fac3f557f49cc3c8e2bf262798bdb4980c60eed7551db849ecb47ad276c85f",
     "table_hashes": {
       "docs/paper/tables/evaluator_ablation.csv": "5c94164f87748c39b92909432d2123d040d8205056766954d48ad4de813189ba",
       "docs/paper/tables/evaluator_ablation.tex": "6148a45d38f306be93c25adf162e2c16f746184f51580567bc50de75d2bb891c",
@@ -111,11 +111,11 @@
   },
   "verification": {
     "trust_level": "github_actions",
-    "evidence_sha256": "1cd08e0f68f1c156d5ba3a2a84422d633b8d9c980b12b0831bb22ca9c9099a3c",
-    "generated_at": "2026-05-23T15:41:36.969543Z",
-    "generated_by": "agent-anvil/0.2.19",
+    "evidence_sha256": "1866d63308e750b52c0253571a93b3a4b1854207a6428eea77c253776fc4d3f2",
+    "generated_at": "2026-05-27T22:30:46.004440Z",
+    "generated_by": "agent-anvil/0.2.22",
     "github_repository": "agent-axiom/agent-anvil-demo-agent",
-    "github_sha": "ebc390cb05de10efb80d852d7dd140898a853b83",
-    "github_run_url": "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26336840349"
+    "github_sha": "1f8134d3ce4ad7f660267773badd47a83c75b958",
+    "github_run_url": "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290"
   }
 }

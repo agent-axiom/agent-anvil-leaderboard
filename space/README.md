@@ -58,10 +58,13 @@ Trust labels shown by the Space:
 - `github_actions`: generated in GitHub Actions with a public run URL
 - `maintainer_rerun`: independently reproduced by maintainers
 
+Provenance badges show whether a `github_actions` row has a verified artifact
+attestation for its submitted JSON.
+
 Verified reference:
 
 - Demo repo: https://github.com/agent-axiom/agent-anvil-demo-agent
-- Successful GitHub Actions run:
-  https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26336840349
-- Accepted leaderboard PR:
+- Attested GitHub Actions run:
+  https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290
+- Original accepted leaderboard PR:
   https://github.com/agent-axiom/agent-anvil-leaderboard/pull/5

@@ -40,9 +40,9 @@ gh attestation verify leaderboard_submission.json -R OWNER/REPO
 
 For a complete public example, see
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent).
-Its successful
-[GitHub Actions run 26336840349](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26336840349)
-produced the verified submission accepted in
+Its current attested reference row comes from
+[GitHub Actions run 26542584290](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290)
+and the original end-to-end submission flow was accepted in
 [agent-anvil-leaderboard#5](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/5).
 
 CI rebuilds `leaderboard.csv` and `leaderboard.json`. Do not edit generated
