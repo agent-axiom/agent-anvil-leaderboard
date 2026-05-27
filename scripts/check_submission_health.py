@@ -144,6 +144,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--leaderboard-json", type=Path, default=Path("leaderboard.json")
     )
+    parser.add_argument(
+        "--summary-out",
+        type=Path,
+        default=None,
+        help="Write the rendered Markdown review summary to this file.",
+    )
     return parser.parse_args(argv)
 
 
@@ -157,6 +163,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     summary = render_markdown_summary(reports, index_errors)
     _write_step_summary(summary)
+    if args.summary_out is not None:
+        args.summary_out.parent.mkdir(parents=True, exist_ok=True)
+        args.summary_out.write_text(summary + "\n", encoding="utf-8")
 
     for report in reports:
         for error in report.errors:

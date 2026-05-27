@@ -55,7 +55,7 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.20 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.21 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
@@ -90,7 +90,8 @@ index. The check fails malformed rows, verifies that benchmark hash metadata is
 present in `leaderboard.json`, and emits warnings for self-reported, stale, or
 low-trial submissions. The Space displays benchmark compatibility and health
 badges so readers can distinguish the canonical Agent Anvil benchmark from
-custom experiments.
+custom experiments. Pull requests also get a sticky PR comment with the same
+health summary, so reviewers can see trust warnings without opening CI logs.
 
 ## Files
 

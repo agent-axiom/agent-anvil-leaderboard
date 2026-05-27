@@ -33,7 +33,7 @@ def healthy_submission(**overrides: Any) -> dict[str, Any]:
         "verification": {
             "trust_level": "github_actions",
             "generated_at": "2026-05-23T15:41:36Z",
-            "generated_by": "agent-anvil/0.2.20",
+            "generated_by": "agent-anvil/0.2.21",
             "github_run_url": "https://github.com/acme/agent/actions/runs/123",
             "github_repository": "acme/agent",
             "github_sha": "abc123",
@@ -85,7 +85,7 @@ def test_check_submission_health_warns_on_low_trials_and_self_reported() -> None
         verification={
             "trust_level": "self_reported",
             "generated_at": "2026-05-23T15:41:36Z",
-            "generated_by": "agent-anvil/0.2.20",
+            "generated_by": "agent-anvil/0.2.21",
         },
     )
 
@@ -123,3 +123,48 @@ def test_check_generated_index_requires_row_metadata(tmp_path: Path) -> None:
 
     assert "row 1: missing submission_schema_version" in errors
     assert "row 1: missing benchmark_manifest_sha256" in errors
+
+
+def test_main_can_write_review_summary_file(tmp_path: Path) -> None:
+    module = load_health_module()
+    submissions_dir = tmp_path / "submissions"
+    submissions_dir.mkdir()
+    (submissions_dir / "safe-agent.json").write_text(
+        json.dumps(healthy_submission()),
+        encoding="utf-8",
+    )
+    leaderboard_json = tmp_path / "leaderboard.json"
+    leaderboard_json.write_text(
+        json.dumps(
+            {
+                "rows": [
+                    {
+                        "submission_schema_version": "agent-anvil.leaderboard.v1",
+                        "submission_generated_by": "agent-anvil/0.2.21",
+                        "benchmark_manifest_sha256": "a" * 64,
+                        "benchmark_scenario_count": 1,
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    summary_path = tmp_path / "submission-review.md"
+
+    exit_code = module.main(
+        [
+            "--submissions-dir",
+            str(submissions_dir),
+            "--leaderboard-json",
+            str(leaderboard_json),
+            "--summary-out",
+            str(summary_path),
+        ]
+    )
+
+    assert exit_code == 0
+    summary = summary_path.read_text(encoding="utf-8")
+    assert "## Agent Anvil leaderboard health" in summary
+    assert "Submissions checked: 1" in summary
+    assert "Errors: 0" in summary
+    assert "Warnings: 0" in summary
