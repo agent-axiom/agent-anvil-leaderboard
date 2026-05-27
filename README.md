@@ -55,7 +55,7 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.21 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.22 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
@@ -79,6 +79,19 @@ when the repository secret `HF_TOKEN` is configured.
 Maintainer reruns are stored as separate audit artifacts under
 `maintainer_reruns/`. They do not rewrite the original submission; CI applies
 them to the generated index after checking the rerun evidence.
+
+For a maintainer rerun, generate a reviewable reproduction script from the
+submitted row and execute it only in a sandbox:
+
+```bash
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.22 \
+  anvil leaderboard reproduce submissions/<agent-name>.json \
+  --out reproduce_leaderboard_submission.sh
+```
+
+The script clones the submitted repository at the claimed commit, reruns the
+benchmark, exports a fresh submission, and compares the evidence hash plus
+headline metrics.
 
 Public rows should not pretend to prevent all gaming. The benchmark is visible,
 so the leaderboard makes the verification boundary explicit.
