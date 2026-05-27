@@ -97,7 +97,7 @@ def test_readme_links_verified_end_to_end_demo() -> None:
     for text in (readme, contributing):
         assert "https://github.com/agent-axiom/agent-anvil-demo-agent" in text
         assert (
-            "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26336840349"
+            "https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290"
             in text
         )
         assert "https://github.com/agent-axiom/agent-anvil-leaderboard/pull/5" in text

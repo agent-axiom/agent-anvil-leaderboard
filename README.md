@@ -33,9 +33,10 @@ gh attestation verify leaderboard_submission.json -R OWNER/REPO
 
 Verified end-to-end reference:
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent)
-generated a `github_actions` submission in
-[GitHub Actions run 26336840349](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26336840349),
-then submitted it through
+generates an attested `github_actions` submission. The current public reference
+row comes from
+[GitHub Actions run 26542584290](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290),
+and the original end-to-end submission flow was accepted through
 [agent-anvil-leaderboard#5](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/5).
 
 In your agent repository:
