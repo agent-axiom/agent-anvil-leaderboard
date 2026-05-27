@@ -30,8 +30,13 @@ not run arbitrary agents and does not collect raw traces.
 For a `github_actions` row, copy
 [`examples/github-actions-submission.yml`](examples/github-actions-submission.yml)
 into `.github/workflows/` in your agent repository. That workflow exports a
-submission with GitHub run metadata and uploads a `submission/*.json` artifact
-you can add to this repository.
+submission with GitHub run metadata, creates a GitHub artifact attestation for
+`leaderboard_submission.json`, and uploads a JSON artifact you can add to this
+repository. Reviewers can verify provenance with:
+
+```bash
+gh attestation verify leaderboard_submission.json -R OWNER/REPO
+```
 
 For a complete public example, see
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent).
@@ -55,7 +60,9 @@ metrics, benchmark hashes, artifact hashes, and trust metadata.
 - `self_reported`: generated locally or outside a public CI run.
 - `github_actions`: generated in GitHub Actions and includes a public run URL.
   The leaderboard CI verifies that the run exists, completed successfully, and
-  matches `verification.github_repository` and `verification.github_sha`.
+  matches `verification.github_repository` and `verification.github_sha`. New
+  rows should also include a verifiable GitHub artifact attestation for the
+  submitted JSON.
 - `maintainer_rerun`: independently reproduced by maintainers.
 
 The leaderboard makes this boundary explicit instead of pretending that a public
