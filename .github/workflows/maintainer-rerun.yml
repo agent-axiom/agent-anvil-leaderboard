@@ -42,7 +42,7 @@ jobs:
           enable-cache: true
       - name: Build current leaderboard index
         run: |
-          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.20 \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.21 \
             anvil leaderboard build submissions \
             --out leaderboard.csv \
             --json-out leaderboard.json \

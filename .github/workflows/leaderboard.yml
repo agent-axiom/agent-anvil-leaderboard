@@ -47,6 +47,8 @@ on:
 permissions:
   contents: read
   actions: read
+  issues: write
+  pull-requests: write
 
 jobs:
   validate:
@@ -60,13 +62,58 @@ jobs:
         run: uv run --with pytest pytest -q tests
       - name: Validate submissions and build index
         run: |
-          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.20 \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.21 \
             anvil leaderboard build submissions \
             --out leaderboard.csv \
             --json-out leaderboard.json \
             --no-artifacts
       - name: Check submission health
-        run: python3 scripts/check_submission_health.py
+        id: submission-health
+        run: >
+          set +e;
+          python3 scripts/check_submission_health.py
+          --summary-out agent-anvil-submission-review.md;
+          exit_code=$?;
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT";
+          exit 0
+      - name: Comment submission review
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v8
+        continue-on-error: true
+        with:
+          script: |
+            const fs = require("fs");
+            const marker = "<!-- agent-anvil-leaderboard-review -->";
+            const body = `${marker}\n${fs.readFileSync("agent-anvil-submission-review.md", "utf8")}`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+            const comments = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+              per_page: 100,
+            });
+            const existing = comments.data.find((comment) =>
+              comment.user.type === "Bot" && comment.body.includes(marker)
+            );
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }
+      - name: Fail on submission health errors
+        if: steps.submission-health.outputs.exit_code != '0'
+        run: exit "${{ steps.submission-health.outputs.exit_code }}"
       - name: Verify GitHub Actions evidence
         env:
           GH_TOKEN: ${{ github.token }}
