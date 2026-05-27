@@ -134,11 +134,16 @@ def test_leaderboard_workflow_runs_submission_health_checks() -> None:
     assert "<!-- agent-anvil-leaderboard-review -->" in workflow
     assert "actions/github-script" in workflow
     assert "Fail on submission health errors" in workflow
+    assert "Fail on GitHub Actions evidence errors" in workflow
     assert "python3 scripts/check_submission_health.py" in readme
     assert "sticky PR comment" in readme
     assert "scripts/verify_attestations.py" in workflow
     assert "Artifact attestation warnings" in readme
     assert "gh attestation verify" in readme
+    assert "--strict-new-submissions-from" in workflow
+    assert "agent-anvil-attestation-review.md" in workflow
+    assert "provenance_status" in readme
+    assert "New `github_actions` rows without attestations fail CI" in readme
 
 
 def test_docs_explain_reproduction_script_flow() -> None:

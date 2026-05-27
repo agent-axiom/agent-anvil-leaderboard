@@ -24,4 +24,7 @@ Trust levels:
 
 Rows claiming `github_actions` must include `verification.github_run_url`,
 `verification.github_repository`, and `verification.github_sha`. CI verifies
-that evidence through the GitHub API before publishing the leaderboard.
+that evidence through the GitHub API before publishing the leaderboard. New
+`github_actions` rows must also have a verifiable GitHub artifact attestation
+for the submitted JSON. `self_reported` rows remain accepted, but the public
+index marks them as unverified provenance.
