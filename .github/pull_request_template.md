@@ -8,6 +8,8 @@ Submission file:
 - [ ] I ran `anvil leaderboard validate submissions/<agent-name>.json`.
 - [ ] I checked CI health warnings for benchmark compatibility, stale evidence,
       and low trial counts.
+- [ ] I understand maintainers may run `anvil leaderboard reproduce` in a
+      sandbox before marking the row as `maintainer_rerun`.
 
 Privacy and artifact boundary:
 

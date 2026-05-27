@@ -33,7 +33,7 @@ def healthy_submission(**overrides: Any) -> dict[str, Any]:
         "verification": {
             "trust_level": "github_actions",
             "generated_at": "2026-05-23T15:41:36Z",
-            "generated_by": "agent-anvil/0.2.21",
+            "generated_by": "agent-anvil/0.2.22",
             "github_run_url": "https://github.com/acme/agent/actions/runs/123",
             "github_repository": "acme/agent",
             "github_sha": "abc123",
@@ -85,7 +85,7 @@ def test_check_submission_health_warns_on_low_trials_and_self_reported() -> None
         verification={
             "trust_level": "self_reported",
             "generated_at": "2026-05-23T15:41:36Z",
-            "generated_by": "agent-anvil/0.2.21",
+            "generated_by": "agent-anvil/0.2.22",
         },
     )
 
@@ -140,7 +140,7 @@ def test_main_can_write_review_summary_file(tmp_path: Path) -> None:
                 "rows": [
                     {
                         "submission_schema_version": "agent-anvil.leaderboard.v1",
-                        "submission_generated_by": "agent-anvil/0.2.21",
+                        "submission_generated_by": "agent-anvil/0.2.22",
                         "benchmark_manifest_sha256": "a" * 64,
                         "benchmark_scenario_count": 1,
                     }

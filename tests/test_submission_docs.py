@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.21"
+AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.22"
 
 
 def test_pr_template_contains_submission_checklist() -> None:
@@ -132,3 +132,15 @@ def test_leaderboard_workflow_runs_submission_health_checks() -> None:
     assert "Fail on submission health errors" in workflow
     assert "python3 scripts/check_submission_health.py" in readme
     assert "sticky PR comment" in readme
+
+
+def test_docs_explain_reproduction_script_flow() -> None:
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    template = (ROOT / ".github" / "pull_request_template.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "anvil leaderboard reproduce submissions/<agent-name>.json" in readme
+    assert "reproduce_leaderboard_submission.sh" in readme
+    assert "maintainer rerun" in readme
+    assert "leaderboard reproduce" in template
