@@ -23,7 +23,13 @@ Full contributor instructions are in [CONTRIBUTING.md](CONTRIBUTING.md). The
 accepted file contract is documented in [submissions/README.md](submissions/README.md).
 For a verified GitHub Actions row, copy
 [examples/github-actions-submission.yml](examples/github-actions-submission.yml)
-into your agent repository and run it from the Actions tab.
+into your agent repository and run it from the Actions tab. The workflow also
+creates a GitHub artifact attestation for `leaderboard_submission.json`; after
+downloading the artifact you can verify provenance with:
+
+```bash
+gh attestation verify leaderboard_submission.json -R OWNER/REPO
+```
 
 Verified end-to-end reference:
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent)
@@ -62,6 +68,7 @@ uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.22 \
   --no-artifacts
 python3 scripts/check_submission_health.py
 python3 scripts/verify_github_runs.py
+python3 scripts/verify_attestations.py --warn-only
 python3 scripts/apply_maintainer_reruns.py
 ```
 
@@ -105,6 +112,13 @@ low-trial submissions. The Space displays benchmark compatibility and health
 badges so readers can distinguish the canonical Agent Anvil benchmark from
 custom experiments. Pull requests also get a sticky PR comment with the same
 health summary, so reviewers can see trust warnings without opening CI logs.
+
+## Artifact attestation warnings
+
+For `github_actions` rows, CI also runs `scripts/verify_attestations.py` to ask
+GitHub whether the submitted JSON has a verifiable artifact attestation from the
+claimed repository. This is warn-only today because older accepted submissions
+predate attestation support, but new copy-paste workflows should include it.
 
 ## Files
 

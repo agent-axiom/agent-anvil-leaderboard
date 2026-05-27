@@ -68,6 +68,10 @@ def test_github_actions_submission_example_is_copy_pasteable() -> None:
     assert "--require-trust github_actions" in workflow
     assert "PYTHONPATH: ${{ github.workspace }}" in workflow
     assert "GITHUB_STEP_SUMMARY" in workflow
+    assert "id-token: write" in workflow
+    assert "attestations: write" in workflow
+    assert "actions/attest@v4" in workflow
+    assert "subject-path: leaderboard_submission.json" in workflow
     assert "actions/upload-artifact@v7" in workflow
     assert "submission/" in workflow
     assert "uv sync --group dev" not in workflow
@@ -132,6 +136,9 @@ def test_leaderboard_workflow_runs_submission_health_checks() -> None:
     assert "Fail on submission health errors" in workflow
     assert "python3 scripts/check_submission_health.py" in readme
     assert "sticky PR comment" in readme
+    assert "scripts/verify_attestations.py" in workflow
+    assert "Artifact attestation warnings" in readme
+    assert "gh attestation verify" in readme
 
 
 def test_docs_explain_reproduction_script_flow() -> None:

@@ -13,6 +13,7 @@ on:
       - "scripts/apply_maintainer_reruns.py"
       - "scripts/check_submission_health.py"
       - "scripts/publish_huggingface.py"
+      - "scripts/verify_attestations.py"
       - "scripts/verify_github_runs.py"
       - "scripts/write_maintainer_rerun.py"
       - "tests/**"
@@ -33,6 +34,7 @@ on:
       - "scripts/apply_maintainer_reruns.py"
       - "scripts/check_submission_health.py"
       - "scripts/publish_huggingface.py"
+      - "scripts/verify_attestations.py"
       - "scripts/verify_github_runs.py"
       - "scripts/write_maintainer_rerun.py"
       - "tests/**"
@@ -118,6 +120,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python3 scripts/verify_github_runs.py
+      - name: Verify artifact attestations
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/verify_attestations.py --warn-only
       - name: Apply maintainer reruns
         env:
           GH_TOKEN: ${{ github.token }}
