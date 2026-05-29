@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.22"
+AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.23"
 
 
 def test_pr_template_contains_submission_checklist() -> None:
@@ -77,11 +77,34 @@ def test_github_actions_submission_example_is_copy_pasteable() -> None:
     assert "uv sync --group dev" not in workflow
 
 
+def test_github_actions_auto_pr_example_is_copy_pasteable() -> None:
+    workflow = (ROOT / "examples" / "github-actions-auto-pr.yml").read_text(
+        encoding="utf-8"
+    )
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    contributing = (ROOT / "CONTRIBUTING.md").read_text(encoding="utf-8")
+
+    assert "examples/github-actions-auto-pr.yml" in readme
+    assert "examples/github-actions-auto-pr.yml" in contributing
+    assert AGENT_ANVIL_RELEASE_REF in workflow
+    assert "LEADERBOARD_PR_TOKEN" in workflow
+    assert "repository: agent-axiom/agent-anvil-leaderboard" in workflow
+    assert "path: leaderboard-repo" in workflow
+    assert "token: ${{ secrets.LEADERBOARD_PR_TOKEN }}" in workflow
+    assert "anvil leaderboard pr leaderboard_submission.json" in workflow
+    assert "--pr-body-out agent-anvil-leaderboard-pr.md" in workflow
+    assert "git push --set-upstream origin" in workflow
+    assert "gh pr create" in workflow
+    assert "GH_TOKEN: ${{ secrets.LEADERBOARD_PR_TOKEN }}" in workflow
+    assert "does not run arbitrary agents" in readme
+
+
 def test_public_workflows_pin_agent_anvil_release() -> None:
     paths = (
         ROOT / ".github" / "workflows" / "leaderboard.yml",
         ROOT / "README.md",
         ROOT / "examples" / "github-actions-submission.yml",
+        ROOT / "examples" / "github-actions-auto-pr.yml",
     )
 
     for path in paths:

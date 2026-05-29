@@ -38,6 +38,15 @@ repository. Reviewers can verify provenance with:
 gh attestation verify leaderboard_submission.json -R OWNER/REPO
 ```
 
+To make the handoff one click, use
+[`examples/github-actions-auto-pr.yml`](examples/github-actions-auto-pr.yml)
+instead. It runs in your agent repository, then checks out this leaderboard repo,
+runs `anvil leaderboard pr leaderboard_submission.json --pr-body-out ...`, pushes
+a branch, and opens a pull request. Add a `LEADERBOARD_PR_TOKEN` secret with
+permission to push to this repository and open pull requests. Keep that token
+separate from model/API secrets; it is only for publishing the already generated
+aggregate JSON.
+
 For a complete public example, see
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent).
 Its current attested reference row comes from

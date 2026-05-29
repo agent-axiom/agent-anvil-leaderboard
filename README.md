@@ -31,6 +31,14 @@ downloading the artifact you can verify provenance with:
 gh attestation verify leaderboard_submission.json -R OWNER/REPO
 ```
 
+If you want the workflow to open the leaderboard pull request for you, copy
+[examples/github-actions-auto-pr.yml](examples/github-actions-auto-pr.yml)
+instead. It still runs the benchmark in your repository, attests the aggregate
+JSON, checks out this leaderboard repository, and opens a PR with a generated
+body. Configure a `LEADERBOARD_PR_TOKEN` secret that can push a branch and open
+pull requests against this repository. The leaderboard still does not run arbitrary agents;
+it only validates the submitted JSON and provenance evidence.
+
 Verified end-to-end reference:
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent)
 generates an attested `github_actions` submission. The current public reference
@@ -62,7 +70,7 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.22 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.23 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
@@ -93,7 +101,7 @@ For a maintainer rerun, generate a reviewable reproduction script from the
 submitted row and execute it only in a sandbox:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.22 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.23 \
   anvil leaderboard reproduce submissions/<agent-name>.json \
   --out reproduce_leaderboard_submission.sh
 ```
