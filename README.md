@@ -43,9 +43,9 @@ Verified end-to-end reference:
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent)
 generates an attested `github_actions` submission. The current public reference
 row comes from
-[GitHub Actions run 26542584290](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290),
-and the original end-to-end submission flow was accepted through
-[agent-anvil-leaderboard#5](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/5).
+[GitHub Actions run 26656805979](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26656805979),
+which auto-opened the accepted leaderboard pull request
+[agent-anvil-leaderboard#18](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/18).
 
 In your agent repository:
 

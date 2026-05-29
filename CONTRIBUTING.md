@@ -50,9 +50,9 @@ aggregate JSON.
 For a complete public example, see
 [agent-anvil-demo-agent](https://github.com/agent-axiom/agent-anvil-demo-agent).
 Its current attested reference row comes from
-[GitHub Actions run 26542584290](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26542584290)
-and the original end-to-end submission flow was accepted in
-[agent-anvil-leaderboard#5](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/5).
+[GitHub Actions run 26656805979](https://github.com/agent-axiom/agent-anvil-demo-agent/actions/runs/26656805979),
+which auto-opened the accepted leaderboard pull request
+[agent-anvil-leaderboard#18](https://github.com/agent-axiom/agent-anvil-leaderboard/pull/18).
 
 CI rebuilds `leaderboard.csv` and `leaderboard.json`. Do not edit generated
 leaderboard index files manually unless you are a maintainer repairing CI
