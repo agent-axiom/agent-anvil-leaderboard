@@ -6,11 +6,19 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+import pytest
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture(autouse=True)
+def isolate_cwd(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.chdir(tmp_path)
+
 
 def load_verify_module():
-    module_path = (
-        Path(__file__).resolve().parents[1] / "scripts" / "verify_attestations.py"
-    )
+    module_path = ROOT / "scripts" / "verify_attestations.py"
     spec = importlib.util.spec_from_file_location("verify_attestations", module_path)
     assert spec is not None
     assert spec.loader is not None
@@ -117,6 +125,30 @@ def test_main_warns_but_passes_by_default_when_attestation_is_missing(
     captured = capsys.readouterr()
     assert "::warning" in captured.err
     assert "gh attestation verify failed" in captured.err
+
+
+def test_main_does_not_mutate_repository_index_when_unit_test_uses_temp_submissions(
+    tmp_path: Path,
+) -> None:
+    module = load_verify_module()
+    submissions = tmp_path / "submissions"
+    submissions.mkdir()
+    write_submission(submissions / "demo.json", github_actions_submission())
+    leaderboard_csv = ROOT / "leaderboard.csv"
+    leaderboard_json = ROOT / "leaderboard.json"
+    before = {
+        leaderboard_csv: leaderboard_csv.read_text(encoding="utf-8"),
+        leaderboard_json: leaderboard_json.read_text(encoding="utf-8"),
+    }
+
+    exit_code = module.main(
+        ["--submissions-dir", str(submissions)],
+        run_command=lambda command: completed(returncode=1),
+    )
+
+    assert exit_code == 0
+    assert leaderboard_csv.read_text(encoding="utf-8") == before[leaderboard_csv]
+    assert leaderboard_json.read_text(encoding="utf-8") == before[leaderboard_json]
 
 
 def test_main_fails_in_strict_mode_when_attestation_is_missing(tmp_path: Path) -> None:
