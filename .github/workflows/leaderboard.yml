@@ -66,7 +66,7 @@ jobs:
         run: uv run --with pytest pytest -q tests
       - name: Validate submissions and build index
         run: |
-          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.39 \
             anvil leaderboard build submissions \
             --out leaderboard.csv \
             --json-out leaderboard.json \
@@ -119,11 +119,12 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           set +e
-          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.39 \
             anvil leaderboard audit submissions \
             --json-out leaderboard_audit.json \
             --markdown-out agent-anvil-leaderboard-audit.md \
-            --github-run
+            --github-run \
+            --fail-on reject
           exit_code=$?
           echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
           exit 0
@@ -175,16 +176,8 @@ jobs:
         if: steps.artifact-attestations.outputs.exit_code != '0'
         run: exit "${{ steps.artifact-attestations.outputs.exit_code }}"
       - name: Fail on leaderboard audit rejects
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          audit = json.loads(Path("leaderboard_audit.json").read_text())
-          rejects = audit["summary"]["reject"]
-          if rejects:
-              raise SystemExit(f"leaderboard audit rejected {rejects} submission(s)")
-          PY
+        if: steps.leaderboard-audit.outputs.exit_code != '0'
+        run: exit "${{ steps.leaderboard-audit.outputs.exit_code }}"
       - name: Prepare Hugging Face payload
         run: python3 scripts/publish_huggingface.py --dry-run
       - uses: actions/upload-artifact@v7.0.1
