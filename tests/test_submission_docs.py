@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.43"
+AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.44"
 
 
 def test_pr_template_contains_submission_checklist() -> None:
