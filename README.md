@@ -70,7 +70,7 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.23 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
@@ -79,6 +79,11 @@ python3 scripts/check_submission_health.py
 python3 scripts/verify_github_runs.py
 python3 scripts/apply_maintainer_reruns.py
 python3 scripts/verify_attestations.py --warn-only
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
+  anvil leaderboard audit submissions \
+  --json-out leaderboard_audit.json \
+  --markdown-out agent-anvil-leaderboard-audit.md \
+  --github-run
 ```
 
 After a pull request is merged into `main`, the same workflow publishes the
@@ -101,7 +106,7 @@ For a maintainer rerun, generate a reviewable reproduction script from the
 submitted row and execute it only in a sandbox:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.23 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
   anvil leaderboard reproduce submissions/<agent-name>.json \
   --out reproduce_leaderboard_submission.sh
 ```
@@ -136,6 +141,21 @@ The generated `leaderboard.json` and `leaderboard.csv` include:
   `maintainer_rerun`
 - `provenance_badge`: compact display label for the public Space and dataset
 - `provenance_warning`: verifier output when provenance is missing or invalid
+
+## Leaderboard audit
+
+CI also runs `anvil leaderboard audit submissions` and uploads both
+`leaderboard_audit.json` and `agent-anvil-leaderboard-audit.md`. The audit
+classifies rows as:
+
+- `accept`: provenance checks are sufficient for automatic indexing
+- `review`: row is visible but needs human attention, for example self-reported
+  evidence
+- `reject`: invalid, tampered, duplicate, or failed-provenance evidence
+
+Rejected rows fail CI. Review rows remain visible in the sticky PR comment so
+maintainers and submitters can see the trust boundary without digging through
+logs.
 
 ## Files
 

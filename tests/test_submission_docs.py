@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.23"
+AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.38"
 
 
 def test_pr_template_contains_submission_checklist() -> None:
@@ -162,6 +162,13 @@ def test_leaderboard_workflow_runs_submission_health_checks() -> None:
     assert "sticky PR comment" in readme
     assert "scripts/verify_attestations.py" in workflow
     assert "Artifact attestation warnings" in readme
+    assert "anvil leaderboard audit submissions" in workflow
+    assert "--json-out leaderboard_audit.json" in workflow
+    assert "--markdown-out agent-anvil-leaderboard-audit.md" in workflow
+    assert "agent-anvil-leaderboard-audit.md" in workflow
+    assert "leaderboard_audit.json" in workflow
+    assert "if: always()" in workflow
+    assert "Leaderboard audit" in readme
     assert "gh attestation verify" in readme
     assert "--strict-new-submissions-from" in workflow
     assert "agent-anvil-attestation-review.md" in workflow
