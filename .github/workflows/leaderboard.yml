@@ -66,7 +66,7 @@ jobs:
         run: uv run --with pytest pytest -q tests
       - name: Validate submissions and build index
         run: |
-          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.23 \
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
             anvil leaderboard build submissions \
             --out leaderboard.csv \
             --json-out leaderboard.json \
@@ -113,6 +113,20 @@ jobs:
           exit_code=$?
           echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
           exit 0
+      - name: Audit leaderboard decisions
+        id: leaderboard-audit
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.38 \
+            anvil leaderboard audit submissions \
+            --json-out leaderboard_audit.json \
+            --markdown-out agent-anvil-leaderboard-audit.md \
+            --github-run
+          exit_code=$?
+          echo "exit_code=$exit_code" >> "$GITHUB_OUTPUT"
+          exit 0
       - name: Comment submission review
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v8
@@ -123,7 +137,8 @@ jobs:
             const marker = "<!-- agent-anvil-leaderboard-review -->";
             const health = fs.readFileSync("agent-anvil-submission-review.md", "utf8");
             const provenance = fs.readFileSync("agent-anvil-attestation-review.md", "utf8");
-            const body = `${marker}\n${health}\n\n${provenance}`;
+            const audit = fs.readFileSync("agent-anvil-leaderboard-audit.md", "utf8");
+            const body = `${marker}\n${health}\n\n${provenance}\n\n${audit}`;
             const { owner, repo } = context.repo;
             const issue_number = context.payload.pull_request.number;
             const comments = await github.rest.issues.listComments({
@@ -159,14 +174,28 @@ jobs:
       - name: Fail on provenance policy errors
         if: steps.artifact-attestations.outputs.exit_code != '0'
         run: exit "${{ steps.artifact-attestations.outputs.exit_code }}"
+      - name: Fail on leaderboard audit rejects
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          audit = json.loads(Path("leaderboard_audit.json").read_text())
+          rejects = audit["summary"]["reject"]
+          if rejects:
+              raise SystemExit(f"leaderboard audit rejected {rejects} submission(s)")
+          PY
       - name: Prepare Hugging Face payload
         run: python3 scripts/publish_huggingface.py --dry-run
       - uses: actions/upload-artifact@v7.0.1
+        if: always()
         with:
           name: agent-anvil-leaderboard-index
           path: |
             leaderboard.csv
             leaderboard.json
+            leaderboard_audit.json
+            agent-anvil-leaderboard-audit.md
       - name: Publish Hugging Face Dataset and Space
         if: github.event_name != 'pull_request'
         env:
