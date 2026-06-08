@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.38"
+AGENT_ANVIL_RELEASE_REF = "git+https://github.com/agent-axiom/agent-anvil@v0.2.39"
 
 
 def test_pr_template_contains_submission_checklist() -> None:
@@ -102,6 +102,7 @@ def test_github_actions_auto_pr_example_is_copy_pasteable() -> None:
 def test_public_workflows_pin_agent_anvil_release() -> None:
     paths = (
         ROOT / ".github" / "workflows" / "leaderboard.yml",
+        ROOT / ".github" / "workflows" / "maintainer-rerun.yml",
         ROOT / "README.md",
         ROOT / "examples" / "github-actions-submission.yml",
         ROOT / "examples" / "github-actions-auto-pr.yml",
@@ -165,9 +166,12 @@ def test_leaderboard_workflow_runs_submission_health_checks() -> None:
     assert "anvil leaderboard audit submissions" in workflow
     assert "--json-out leaderboard_audit.json" in workflow
     assert "--markdown-out agent-anvil-leaderboard-audit.md" in workflow
+    assert "--fail-on reject" in workflow
+    assert "--fail-on reject" in readme
     assert "agent-anvil-leaderboard-audit.md" in workflow
     assert "leaderboard_audit.json" in workflow
     assert "if: always()" in workflow
+    assert "steps.leaderboard-audit.outputs.exit_code" in workflow
     assert "Leaderboard audit" in readme
     assert "gh attestation verify" in readme
     assert "--strict-new-submissions-from" in workflow
