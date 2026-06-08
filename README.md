@@ -70,7 +70,7 @@ submissions/acme-my-agent.json
 Open a pull request. CI will run:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.52 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.53 \
   anvil leaderboard build submissions \
   --out leaderboard.csv \
   --json-out leaderboard.json \
@@ -79,7 +79,7 @@ python3 scripts/check_submission_health.py
 python3 scripts/verify_github_runs.py
 python3 scripts/apply_maintainer_reruns.py
 python3 scripts/verify_attestations.py --warn-only
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.52 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.53 \
   anvil leaderboard audit submissions \
   --json-out leaderboard_audit.json \
   --markdown-out agent-anvil-leaderboard-audit.md \
@@ -107,7 +107,7 @@ For a maintainer rerun, generate a reviewable reproduction script from the
 submitted row and execute it only in a sandbox:
 
 ```bash
-uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.52 \
+uvx --from git+https://github.com/agent-axiom/agent-anvil@v0.2.53 \
   anvil leaderboard reproduce submissions/<agent-name>.json \
   --out reproduce_leaderboard_submission.sh
 ```
